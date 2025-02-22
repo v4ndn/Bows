@@ -1,0 +1,9 @@
+main: com.v4nden.bows.Bows
+name: Bows
+api-version: "1.20"
+version: 1.0
+commands:
+  boost:
+    description: "Get a boost"
+  startgame:
+    description: "Start game"
