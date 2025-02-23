@@ -1,37 +1,10 @@
 package com.v4nden.bows.Boosts.BoostCommand;
 
-import java.util.List;
-import java.util.Random;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.block.data.type.TNT;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Snowball;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
-
-import com.v4nden.bows.Bows;
-import com.v4nden.bows.Boosts.Boost;
 import com.v4nden.bows.Boosts.BoostTypes;
-import com.v4nden.bows.Utils.TemporaryListener;
-
-import net.md_5.bungee.api.ChatColor;
 
 public class BoostCommand implements CommandExecutor {
 

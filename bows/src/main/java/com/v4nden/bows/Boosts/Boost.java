@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.v4nden.bows.Bows;
+import com.v4nden.bows.BowsUtils;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -109,13 +110,13 @@ public class Boost implements Listener {
             rarityColors.add("#834aff");
             rarityColors.add("#e97218");
 
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                p.sendMessage(
-                        "" + ChatColor.of("#e97218") + "[🏹] " + ChatColor.of("#f4ebe5") + p.getName() + " использует "
-                                + name
-                                + ChatColor.of(rarityColors.get(rarity - 1))
-                                + " [" + "★".repeat(rarity) + "]");
-            }
+            BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(),
+                    owner.getName()
+                            + " использует "
+                            + name
+                            + ChatColor.of(rarityColors.get(rarity - 1))
+                            + " [" + "★".repeat(rarity) + "]");
+
             runnable.accept(owner);
             e.getOffHandItem().setType(Material.AIR);
             e.getHandlers().unregister(this);

@@ -2,17 +2,22 @@ package com.v4nden.bows.Game;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.data.type.TNT;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -22,9 +27,13 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.v4nden.bows.Bows;
+import com.v4nden.bows.BowsUtils;
+import com.v4nden.bows.Boosts.BoostTypes;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
@@ -81,7 +90,7 @@ public class Game implements Listener {
                 p.setPlayerListFooter(message);
 
             }
-        }, 0L, 10L);
+        }, 0L, 20L);
         taskActionTimer = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, () -> {
             long diff = System.currentTimeMillis() - gameStart;
 
@@ -89,7 +98,24 @@ public class Game implements Listener {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
                         new TextComponent("[" + Math.round(diff / 1000) + "]"));
             });
-        }, 0L, 10L);
+
+            if (Math.round(diff / 1000) % 60 == 0) {
+                List<String> boostsList = new ArrayList<>();
+
+                for (BoostTypes type : BoostTypes.values()) {
+                    boostsList.add(type.id.toUpperCase());
+                }
+
+                BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(), "Буст!");
+
+                gamePlayers.forEach((player) -> {
+                    int rnd = new Random().nextInt(boostsList.size());
+                    player.getInventory()
+                            .addItem(BoostTypes.valueOf(boostsList.get(rnd)).getBoost(player).createItem());
+                });
+            }
+
+        }, 0L, 20L);
         taskRenewArrowsTimer = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, () -> {
 
             gamePlayers.forEach((player) -> {
@@ -108,7 +134,7 @@ public class Game implements Listener {
 
         Bukkit.getWorld("world").getWorldBorder().setSize(1400);
         Bukkit.getWorld("world").getWorldBorder().setCenter(location);
-        Bukkit.getWorld("world").getWorldBorder().setSize(1, 15 * 60);
+        Bukkit.getWorld("world").getWorldBorder().setSize(1, 7 * 60);
     }
 
     public static void stopGame() {
@@ -122,7 +148,10 @@ public class Game implements Listener {
             p.teleport(new Location(Bukkit.getWorld("world"), 0, 100, 0));
             gamePlayers.remove(p);
             p.getInventory().clear();
+            p.setPlayerListFooter("");
         }
+        Bukkit.getWorld("world").getWorldBorder().setCenter(0, 0);
+        Bukkit.getWorld("world").getWorldBorder().setSize(500);
     }
 
     public static void eliminatePlayer(Player p) {
@@ -135,31 +164,35 @@ public class Game implements Listener {
 
     }
 
-    public static void checkForWinner() {
-
+    @EventHandler
+    public void handlePlayerJoin(PlayerJoinEvent e) {
+        e.getPlayer().getInventory().clear();
+        if (isRunning) {
+            e.getPlayer().setGameMode(GameMode.SPECTATOR);
+            e.getPlayer()
+                    .teleport(Bukkit.getWorld("world")
+                            .getHighestBlockAt(Bukkit.getWorld("world").getWorldBorder().getCenter()).getLocation()
+                            .add(0, 2, 0));
+        } else {
+            e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0, 100, 0));
+            e.getPlayer().setGameMode(GameMode.ADVENTURE);
+        }
     }
 
     @EventHandler
     public void preventDamageFromOtherSources(EntityDamageByEntityEvent e) {
-
-        if (!(e.getDamager() instanceof Arrow)) {
+        if (!(e.getDamager() instanceof Arrow) && !(e.getDamager() instanceof TNTPrimed)) {
             e.setCancelled(true);
         }
-        if (e.getEntity() instanceof Player) {
-            Player p = (Player) e.getEntity();
-            if (p.getHealth() - e.getDamage() <= 0) {
-                e.setCancelled(true);
-                eliminatePlayer(p);
-                if (isRunning && gamePlayers.size() == 1) {
-                    for (Player gp : Bukkit.getOnlinePlayers()) {
-                        gp.sendMessage(ChatColor.of("#e97218") + "[🏹] " + ChatColor.of("#f4ebe5")
-                                + gamePlayers.get(0).getName() + " победил!");
-                    }
-                    stopGame();
 
-                }
-            }
-        }
+    }
+
+    @EventHandler
+    public void handlePlayerLeave(PlayerQuitEvent e) {
+
+        if (isRunning)
+            eliminatePlayer(e.getPlayer());
+
     }
 
     @EventHandler
@@ -174,6 +207,25 @@ public class Game implements Listener {
         if (e.getCurrentItem().getType().equals(Material.BOW) || e.getCurrentItem().getType().equals(Material.ARROW)
                 || e.getCursor().getType().equals(Material.BOW) || e.getCursor().getType().equals(Material.ARROW)) {
             e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void preventBowAndArrowsClick(EntityDamageEvent e) {
+        if (e.getEntity() instanceof Player) {
+            Player p = (Player) e.getEntity();
+            if (p.getHealth() - e.getDamage() <= 0) {
+                e.setCancelled(true);
+                eliminatePlayer(p);
+                if (isRunning && gamePlayers.size() == 1) {
+
+                    BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(),
+                            gamePlayers.get(0).getName() + " победил!");
+
+                    stopGame();
+
+                }
+            }
         }
     }
 
