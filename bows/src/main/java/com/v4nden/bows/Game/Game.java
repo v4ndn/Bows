@@ -9,12 +9,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.data.type.TNT;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -138,6 +140,7 @@ public class Game implements Listener {
     }
 
     public static void stopGame() {
+        isRunning = false;
         Bukkit.getServer().getScheduler().cancelTask(taskActionTimer);
         Bukkit.getServer().getScheduler().cancelTask(taskRenewArrowsTimer);
         Bukkit.getServer().getScheduler().cancelTask(taskTabInfos);
@@ -155,7 +158,8 @@ public class Game implements Listener {
     }
 
     public static void eliminatePlayer(Player p) {
-
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 10, 1);
+        BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(), p.getName() + " убит!");
         gamePlayers.remove(p);
         p.setPlayerListName(p.getName());
         p.setPlayerListOrder(1);
@@ -179,12 +183,11 @@ public class Game implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void preventDamageFromOtherSources(EntityDamageByEntityEvent e) {
         if (!(e.getDamager() instanceof Arrow) && !(e.getDamager() instanceof TNTPrimed)) {
             e.setCancelled(true);
         }
-
     }
 
     @EventHandler
