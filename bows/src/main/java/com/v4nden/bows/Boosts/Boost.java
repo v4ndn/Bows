@@ -138,31 +138,28 @@ public class Boost implements Listener {
     @EventHandler
     public void onActivate(PlayerSwapHandItemsEvent e) {
 
-        if (!e.getPlayer().equals(owner))
+        if (!e.getPlayer().equals(owner)) {
+            System.out.println(createLogMessage("NOT MY BUSINESS"));
             return;
+        }
+
         if (this.used) {
             System.out.println(createLogMessage("UNREGISTER CUZ USED"));
             e.getHandlers().unregister(this);
         }
 
-        System.out.println(createLogMessage("swap event"));
-        if (!e.getPlayer().getInventory().contains(this.item)) {
-            e.getHandlers().unregister(this);
-            return;
-        }
-        if (owner.getCooldown(e.getMainHandItem()) > 0) {
-            e.setCancelled(true);
-            return;
-        }
-        if (owner.getCooldown(this.getItem()) > 0) {
-            e.setCancelled(true);
-            return;
-        }
         if (compareUids(this.item, e.getMainHandItem())) {
             e.setCancelled(true);
             return;
         }
+
+        System.out.println(createLogMessage("swap event"));
+
         if (compareUids(this.item, e.getOffHandItem())) {
+            if (e.getMainHandItem().getType() != Material.AIR) {
+                e.setCancelled(true);
+                return;
+            }
             System.out.println(createLogMessage("used"));
 
             List<String> rarityColors = new ArrayList<String>();

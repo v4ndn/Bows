@@ -89,20 +89,33 @@ public enum BoostTypes {
 											1);
 								}
 
+								// for (int i = 0; i <= 10; i++) {
+								// final int fi = Integer.valueOf(i);
+								// Bukkit.getServer().getScheduler().runTaskLater(Bows.instance, () -> {
+								// BowsUtils.spawnParticleCircle(Particle.CLOUD, loc.clone().add(0, 15, 0),
+								// 15 * Math.abs(Math.sin(fi * 3)));
+								// }, fi * 20);
+								// }
+
 								for (int i = 0; i <= 100; i += 2) {
-									Random random = new Random();
 									Bukkit.getScheduler().runTaskLater(Bows.instance, () -> {
-										loc.getWorld().spawnArrow(
-												loc.clone()
-														.add(new Vector(
-																5 - random.nextInt(
-																		10)
-																		+ random.nextFloat(),
-																50,
-																5 - random.nextInt(
-																		10)
-																		+ random.nextFloat())),
-												new Vector(0, -3, 0), 2f, .1f);
+										for (int c = 0; c < 10; c++) {
+
+											double angle = Math.random() * 2 * Math.PI;
+											double distance = Math.sqrt(Math.random()) * 15;
+											Arrow arrow = loc.getWorld().spawnArrow(
+													loc.clone()
+															.add(distance * Math.cos(angle), 100,
+																	distance * Math.sin(angle)),
+													new Vector(0, -3, 0),
+													Double.valueOf(3f * Math.random()).floatValue(), .1f);
+											Bukkit.getScheduler().runTaskLater(Bows.instance, () -> {
+												arrow.remove();
+												arrow.getWorld().playSound(arrow.getLocation(),
+														Sound.ITEM_BOTTLE_FILL_DRAGONBREATH, .1f,
+														Double.valueOf(2 * Math.random()).floatValue());
+											}, 20L * 15);
+										}
 
 									}, i);
 								}
@@ -678,7 +691,37 @@ public enum BoostTypes {
 							1);
 				}
 
-			});
+			}),
+	WIND(Material.LIGHT_GRAY_DYE, 2, "wind", "Ветер",
+			ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
+					+ "\n Запускает владельца\n относительно поворота головы\n вперёд ~30 блоков",
+			player -> {
+
+				Game.gamePlayers.forEach(gamePlayer -> {
+					if (gamePlayer.equals(player))
+						return;
+					if (gamePlayer.getLocation().distance(player.getLocation()) > 15)
+						return;
+					gamePlayer.setVelocity(player.getLocation().getDirection().multiply((1.5)));
+				});
+
+				Location location = player.getLocation().add(0, .7, 0);
+				Vector direction = location.getDirection();
+
+				for (int i = 0; i <= 50; i++) {
+					player.getWorld().spawnParticle(Particle.CLOUD, location.getX(), location.getY(), location.getZ(),
+							0,
+							(float) direction.getX() * Math.random(), (float) direction.getY() * Math.random(),
+							(float) direction.getZ() * Math.random(), 3 + Math.random(), null);
+				}
+
+				for (Player p : Bukkit.getOnlinePlayers()) {
+					p.playSound(player.getLocation(), Sound.ENTITY_BREEZE_IDLE_AIR,
+							SoundCategory.MASTER, 1,
+							1);
+				}
+
+			}, .5f);
 
 	public Material material;
 	public int rarity;

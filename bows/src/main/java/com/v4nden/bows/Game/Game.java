@@ -31,6 +31,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.v4nden.bows.Bows;
@@ -229,6 +230,41 @@ public class Game implements Listener {
 
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void preventSwapNotBoost(PlayerSwapHandItemsEvent e) {
+        if (e.getOffHandItem() == null) {
+            e.setCancelled(true);
+            return;
+        }
+        if (e.getOffHandItem().getItemMeta() == null) {
+            e.setCancelled(true);
+            return;
+        }
+        if (e.getOffHandItem().getItemMeta().getLore() == null) {
+            e.setCancelled(true);
+            return;
+        }
+        List<String> lore = e.getOffHandItem().getItemMeta().getLore();
+        if (!lore.get(lore.size() - 2).contains("bows")) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void preventBoostSecontHandItemPlace(InventoryClickEvent e) {
+        if (e.getSlot() == 40) {
+            e.setCancelled(true);
+            return;
+        }
+    }
+
+    @EventHandler
+    public void preventBoostSecontHandItemDrag(InventoryDragEvent e) {
+        if (e.getInventorySlots().contains(40)) {
+            e.setCancelled(true);
         }
     }
 
