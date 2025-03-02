@@ -4,14 +4,19 @@ import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+
+import com.v4nden.bows.Utils.ArcPointsGenerator;
 
 import com.v4nden.bows.Utils.ArcPointsGenerator;
 

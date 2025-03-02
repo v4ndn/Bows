@@ -5,5 +5,7 @@ version: 1.0
 commands:
   boost:
     description: "Get a boost"
+    permission: "bows.root"
   startgame:
     description: "Start game"
+    permission: "bows.root"

@@ -20,6 +20,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderSignal;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.entity.TNTPrimed;
@@ -62,7 +63,7 @@ public enum BoostTypes {
 
 	RAIN(Material.ORANGE_DYE, 3, "rain", "Дождь из стрел", ChatColor.of("#a6a6a6") + "При использовании:"
 			+ ChatColor.RESET
-			+ "\n Бросает заряд в сторону\n направления головы игрока, \n на точке где заряд \n контактировал с блоком\n вызывает дождь из стрел\n в радиусе 5ти блоков",
+			+ "\n Выпускает заряд в сторону\n направления головы игрока, \n на точке где заряд \n контактировал с блоком\n вызывает дождь из стрел\n в радиусе 15ти блоков",
 			player -> {
 
 				Snowball charge = BowsUtils.lauchCharge(player, Material.ORANGE_DYE);
@@ -88,6 +89,14 @@ public enum BoostTypes {
 											SoundCategory.MASTER, 5,
 											1);
 								}
+
+								// for (int i = 0; i <= 10; i++) {
+								// final int fi = Integer.valueOf(i);
+								// Bukkit.getServer().getScheduler().runTaskLater(Bows.instance, () -> {
+								// BowsUtils.spawnParticleCircle(Particle.CLOUD, loc.clone().add(0, 15, 0),
+								// 15 * Math.abs(Math.sin(fi * 3)));
+								// }, fi * 20);
+								// }
 
 								// for (int i = 0; i <= 10; i++) {
 								// final int fi = Integer.valueOf(i);
@@ -127,7 +136,7 @@ public enum BoostTypes {
 
 			}),
 	BRIDGE(Material.LIME_DYE, 2, "bridge", "Мостик", ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
-			+ "\n Бросает заряд в сторону\n направления головы игрока, \n по траектории пути заряда\n в воздухе оставляет платформы\n 3x3 из блоков, которые\n пропадают спустя 10 секунд",
+			+ "\n Выпускает заряд в сторону\n направления головы игрока, \n по траектории пути заряда\n в воздухе оставляет платформы\n 3x3 из блоков, которые\n пропадают спустя 10 секунд",
 			player -> {
 				Snowball charge = BowsUtils.lauchCharge(player, Material.LIME_DYE);
 
@@ -171,7 +180,7 @@ public enum BoostTypes {
 			}),
 
 	DRILL(Material.NETHERITE_SCRAP, 4, "drill", "Бур", ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
-			+ "\n НЕТ ОПИСАНИЯ",
+			+ "\n Выпускает заряд в сторону\n направления головы игрока, заряд \n разрушает все блоки в радиусе 5 - 3\n блоков от его текущей  позиции.\n Радиус убывает с временем, полёта заряда.\n Заряд существует 3 секунды",
 			player -> {
 				Snowball charge = BowsUtils.lauchCharge(player, Material.NETHERITE_SCRAP);
 				double created = System.currentTimeMillis();
@@ -212,7 +221,7 @@ public enum BoostTypes {
 			}),
 	ARROWGUN(Material.BLAZE_POWDER, 4, "arrowgun", "Стреломёт",
 			ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
-					+ "\n НЕТ ОПИСАНИЯ",
+					+ "\n Выпускает шквал из стрел разной\n скорости с разбросом в направлении\n головы игрока, действует 3 секунды",
 			player -> {
 				List<Arrow> arrows = new ArrayList<Arrow>();
 				double now = System.currentTimeMillis();
@@ -251,7 +260,7 @@ public enum BoostTypes {
 
 			}, 3),
 	RIDER(Material.BOWL, 2, "rider", "Райдер", ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
-			+ "\n Бросает заряд в сторону\n направления головы игрока, \n игрок становится пассажиром\n заряда и двигается по\n траектории его полёта\n в воздухе",
+			+ "\n Выпускает заряд в сторону\n направления головы игрока, \n игрок становится пассажиром\n заряда и двигается по\n траектории его полёта\n в воздухе",
 			player -> {
 				Snowball charge = BowsUtils.lauchCharge(player, Material.BOWL);
 				charge.addPassenger(player);
@@ -338,7 +347,7 @@ public enum BoostTypes {
 
 	LOCATOR(Material.ECHO_SHARD, 1, "locator", "Локатор",
 			ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
-					+ "\n НЕТ ОПИСАНИЯ",
+					+ "\n Воспроизводит звук эха на позиции\n ближайшего от владельца игрока,\n действует 10 секунд",
 			player -> {
 
 				Game.gamePlayers.remove(player);
@@ -477,7 +486,7 @@ public enum BoostTypes {
 			}, 5),
 	BREAK(Material.FIREWORK_STAR, 4, "break", "Удар", ChatColor.of("#a6a6a6")
 			+ "При использовании:" + ChatColor.RESET
-			+ "\n Подбрасывает владельца\n в воздух, затем с силой\n ударяет о поверхность,\n что создаёт ударную\n волну отталкивающую и \n наносящую урон игрокам\n в радиусе 10 блоков",
+			+ "\n Подбрасывает владельца\n в воздух, затем с силой\n ударяет о поверхность,\n что создаёт ударную\n волну отталкивающую и \n наносящую урон игрокам\n в радиусе 7 блоков",
 			player -> {
 				player.setVelocity(player.getVelocity().add(new Vector(0, 1.15, 0)));
 				for (Player p : Bukkit.getOnlinePlayers()) {
@@ -497,8 +506,12 @@ public enum BoostTypes {
 							0, 3, .01);
 					Game.gamePlayers.forEach((gamePlayer) -> {
 						if (!gamePlayer.equals(player)) {
-							if (gamePlayer.getLocation().distance(player.getLocation()) < 10) {
-								gamePlayer.setVelocity(gamePlayer.getVelocity().add(new Vector(0, 1.5, 0)));
+							if (gamePlayer.getLocation().distance(player.getLocation()) < 7) {
+								;
+								gamePlayer.setVelocity(gamePlayer.getVelocity()
+										.add(gamePlayer.getLocation().subtract(player.getLocation()).toVector()
+												.divide(new Vector(2, 2, 2))
+												.setY(1.5)));
 							}
 						}
 					});
@@ -530,7 +543,7 @@ public enum BoostTypes {
 							1);
 				}
 
-			}, .7f),
+			}),
 	METEOR(Material.FIRE_CHARGE, 2, "meteor", "Метеор", ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
 			+ "\n Бросает заряд в сторону\n направления головы игрока, \n на точке где заряд \n контактировал с блоком\n вызывает заряженный\n динамит падающий сверху",
 			player -> {
@@ -640,19 +653,10 @@ public enum BoostTypes {
 			}, 0.5f),
 	BLINDNESSAURA(Material.BLACK_DYE, 1, "blindnessaura", "Аура слепоты",
 			ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
-					+ "\n Создаёт вокруг владельца\n коробку из стекла 5х5х3",
+					+ "\n Создаёт вокруг владельца ауру\n эффекта, все игроки находящиеся в радиусе\n действия ауры получают эффект\n слепоты. Эффект не действует\n на владельца буста",
 			player -> {
-				Random random = new Random();
 
 				int task = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bows.instance, () -> {
-
-					Game.gamePlayers.forEach((gamePlayer) -> {
-						if (gamePlayer != player) {
-							if (gamePlayer.getLocation().distance(player.getLocation()) < 50) {
-								gamePlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 120, 1));
-							}
-						}
-					});
 
 					Location location = player.getLocation();
 					for (double i = 0; i <= Math.PI; i += Math.PI / 20) {
@@ -662,17 +666,65 @@ public enum BoostTypes {
 							double x = Math.cos(a) * radius;
 							double z = Math.sin(a) * radius;
 
+							Game.gamePlayers.forEach((gamePlayer) -> {
+								if (gamePlayer != player) {
+									if (gamePlayer.getLocation().distance(player.getLocation()) < 20) {
+										gamePlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 1));
+									}
+								}
+							});
+
 							player.getLocation().getWorld().spawnParticle(Particle.DUST,
-									location.clone().add(x + random.nextFloat(),
-											y + random.nextFloat(),
-											z + random.nextFloat()),
+									location.clone().add(x + Math.random() * 3,
+											y + Math.random() * 3,
+											z + Math.random() * 3),
 									1,
 									new Particle.DustOptions(
 											Color.fromRGB(46, 46, 46), 5));
 
 						}
 					}
-				}, 0, 3L);
+				}, 0, 5L);
+
+				Bukkit.getScheduler().runTaskLater(Bows.instance, () -> {
+					Bukkit.getScheduler().cancelTask(task);
+				}, 120L);
+
+			}, 3),
+	SLOWNESSAURA(Material.GRAY_DYE, 2, "slownessaura", "Аура замедления",
+			ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
+					+ "\n Создаёт вокруг владельца ауру\n эффекта, все игроки находящиеся в радиусе\n действия ауры получают эффект\n замедления. Эффект не действует\n на владельца буста",
+			player -> {
+
+				int task = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bows.instance, () -> {
+
+					Location location = player.getLocation();
+					for (double i = 0; i <= Math.PI; i += Math.PI / 20) {
+						double radius = Math.sin(i) * 20;
+						double y = Math.cos(i) * 20;
+						for (double a = 0; a < Math.PI * 2; a += Math.PI / 20) {
+							double x = Math.cos(a) * radius;
+							double z = Math.sin(a) * radius;
+
+							Game.gamePlayers.forEach((gamePlayer) -> {
+								if (gamePlayer != player) {
+									if (gamePlayer.getLocation().distance(player.getLocation()) < 20) {
+										gamePlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 1));
+									}
+								}
+							});
+
+							player.getLocation().getWorld().spawnParticle(Particle.DUST,
+									location.clone().add(x + Math.random() * 3,
+											y + Math.random() * 3,
+											z + Math.random() * 3),
+									1,
+									new Particle.DustOptions(
+											Color.fromRGB(120, 120, 120), 5));
+
+						}
+					}
+				}, 0, 5L);
 
 				Bukkit.getScheduler().runTaskLater(Bows.instance, () -> {
 					Bukkit.getScheduler().cancelTask(task);

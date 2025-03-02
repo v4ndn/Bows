@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,6 +14,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.data.type.TNT;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
@@ -33,6 +35,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import com.v4nden.bows.Bows;
 import com.v4nden.bows.BowsUtils;
@@ -51,6 +54,7 @@ public class Game implements Listener {
     private static int taskActionTimer;
     private static int taskRenewArrowsTimer;
     private static int taskTabInfos;
+    private static int taskBoosts;
 
     public static void startGame(Location location) {
         stopGame();
@@ -70,9 +74,9 @@ public class Game implements Listener {
             player.setPlayerListOrder(10);
             player.teleport(location.getWorld()
                     .getHighestBlockAt(
-                            // location.add(random.nextInt(10, 30), random.nextInt(10, 30),
-                            // random.nextInt(10, 30)))
-                            location.add(0, 0, 0))
+                            location.add(random.nextInt(-100, 100), 0,
+                                    random.nextInt(-100, 100)))
+                    // location.add(0, 0, 0))
                     .getLocation().add(0, 1, 0));
         });
         taskTabInfos = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, () -> {
@@ -98,27 +102,40 @@ public class Game implements Listener {
             long diff = System.currentTimeMillis() - gameStart;
 
             gamePlayers.forEach((player) -> {
+
+                double xVectorToCenter = player.getLocation().getX() - Game.gameLocation.getX();
+                double zVectorToCenter = player.getLocation().getZ() - Game.gameLocation.getZ();
+
+                Vector vectorToCenter = new Vector(xVectorToCenter, 0, zVectorToCenter).normalize();
+                Vector directionVector = player.getLocation().getDirection().normalize();
+
+                Double indicator = vectorToCenter.distance(directionVector) / 2;
+
+                player.setExp(indicator.floatValue());
+
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                        new TextComponent("[" + Math.round(diff / 1000) + "]"));
+                        new TextComponent(
+                                "[" + Math.round(diff / 1000) + "]"));
             });
 
-            if (Math.round(diff / 1000) % 60 == 0) {
-                List<String> boostsList = new ArrayList<>();
+        }, 0L, 2L);
+        taskBoosts = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, () -> {
 
-                for (BoostTypes type : BoostTypes.values()) {
-                    boostsList.add(type.id.toUpperCase());
-                }
+            List<String> boostsList = new ArrayList<>();
 
-                BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(), "Буст!");
-
-                gamePlayers.forEach((player) -> {
-                    int rnd = new Random().nextInt(boostsList.size());
-                    player.getInventory()
-                            .addItem(BoostTypes.valueOf(boostsList.get(rnd)).getBoost(player).createItem());
-                });
+            for (BoostTypes type : BoostTypes.values()) {
+                boostsList.add(type.id.toUpperCase());
             }
 
-        }, 0L, 20L);
+            BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(), "Буст!");
+
+            gamePlayers.forEach((player) -> {
+                int rnd = new Random().nextInt(boostsList.size());
+                player.getInventory()
+                        .addItem(BoostTypes.valueOf(boostsList.get(rnd)).getBoost(player).createItem());
+            });
+
+        }, 0L, 20 * 30L);
         taskRenewArrowsTimer = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, () -> {
 
             gamePlayers.forEach((player) -> {
@@ -133,11 +150,11 @@ public class Game implements Listener {
                             new ItemStack(Material.ARROW, player.getInventory().getItem(1).getAmount() + 1));
                 }
             });
-        }, 0L, 30L);
+        }, 0L, 40L);
 
         Bukkit.getWorld("world").getWorldBorder().setSize(1400);
         Bukkit.getWorld("world").getWorldBorder().setCenter(location);
-        Bukkit.getWorld("world").getWorldBorder().setSize(1, 7 * 60);
+        Bukkit.getWorld("world").getWorldBorder().setSize(5, 7 * 60);
     }
 
     public static void stopGame() {
@@ -145,6 +162,7 @@ public class Game implements Listener {
         Bukkit.getServer().getScheduler().cancelTask(taskActionTimer);
         Bukkit.getServer().getScheduler().cancelTask(taskRenewArrowsTimer);
         Bukkit.getServer().getScheduler().cancelTask(taskTabInfos);
+        Bukkit.getServer().getScheduler().cancelTask(taskBoosts);
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.setPlayerListOrder(1);
             p.setPlayerListName(p.getName());
@@ -186,7 +204,8 @@ public class Game implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void preventDamageFromOtherSources(EntityDamageByEntityEvent e) {
-        if (!(e.getDamager() instanceof Arrow) && !(e.getDamager() instanceof TNTPrimed)) {
+        if (!(e.getDamager() instanceof Arrow) && !(e.getDamager() instanceof TNTPrimed)
+                && !(e.getDamager() instanceof LightningStrike)) {
             e.setCancelled(true);
         }
     }
@@ -216,8 +235,10 @@ public class Game implements Listener {
 
     @EventHandler
     public void preventBowAndArrowsClick(EntityDamageEvent e) {
+
         if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
+
             if (p.getHealth() - e.getDamage() <= 0) {
                 e.setCancelled(true);
                 eliminatePlayer(p);
