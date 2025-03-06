@@ -38,7 +38,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class Boost implements Listener {
     public Player owner;
-    public Consumer<Player> runnable;
+    public static Consumer<Player> runnable;
 
     private Material material;
     private String id;
