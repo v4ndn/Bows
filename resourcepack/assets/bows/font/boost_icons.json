@@ -464,6 +464,15 @@
       "chars": [
         ""
       ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:item/iron_axe.png",
+      "ascent": 12,
+      "height": 16,
+      "chars": [
+        ""
+      ]
     }
   ]
 }
