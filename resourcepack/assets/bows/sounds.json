@@ -1,0 +1,27 @@
+{
+  "announcer.first_blood": {
+    "sounds": [
+      "bows:announcer/first_blood"
+    ]
+  },
+  "announcer.double_kill": {
+    "sounds": [
+      "bows:announcer/double_kill"
+    ]
+  },
+  "announcer.triple_kill": {
+    "sounds": [
+      "bows:announcer/triple_kill"
+    ]
+  },
+  "announcer.ultra_kill": {
+    "sounds": [
+      "bows:announcer/ultra_kill"
+    ]
+  },
+  "announcer.rampage": {
+    "sounds": [
+      "bows:announcer/rampage"
+    ]
+  }
+}
