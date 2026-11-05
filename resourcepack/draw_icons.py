@@ -33,6 +33,11 @@ def octagon(x, y):
 
 
 # ---- палитры: пастельная заливка + тона того же оттенка ----
+def rounded_square(x, y):
+    dx, dy = abs(x - C), abs(y - C)
+    return dx <= 5 and dy <= 5 and dx + dy <= 9
+
+
 def palette(fill, outline, glyph, light, shade):
     return {'fill': fill, 'outline': outline, 'glyph': glyph, 'light': light, 'shade': shade}
 
@@ -41,6 +46,7 @@ BLUE = palette('#b5dcf5', '#6fa3c7', '#3d6c8f', '#e3f3fd', '#97c6e6')
 LAVENDER = palette('#d4c4f5', '#9a85d1', '#5e4a9c', '#efe8ff', '#bba8ec')
 MINT = palette('#b8ead2', '#73bd9b', '#3f8a68', '#e4f8ee', '#9bd9bc')
 PEACH = palette('#f8cfae', '#d69a6e', '#9a5a33', '#fdeee2', '#edb88f')
+BUTTER = palette('#f6e6a6', '#d1b65e', '#8a7228', '#fdf7dc', '#ead489')
 
 # ---- символы: '#' = тёмный тон, 'o' = светлый тон ----
 HOURGLASS = [
@@ -80,11 +86,21 @@ SLAM = [
     "#######",
 ]
 
+DICE = [
+    "#...#",
+    ".....",
+    "..#..",
+    ".....",
+    "#...#",
+]
+
 ICONS = {
     'timestop': (circle, BLUE, HOURGLASS),
     'teleportrandom': (diamond, LAVENDER, QUESTION),
     'teleportclosest': (diamond, MINT, TARGET),
     'break': (octagon, PEACH, SLAM),
+    # не буст: кнопка случайного стартового буста в окне выбора
+    'random': (rounded_square, BUTTER, DICE),
 }
 
 

@@ -52,6 +52,9 @@ for name in sorted(os.listdir(TYPES)):
         continue
     boosts[boost_id(source)] = texture_of(source)
 
+# иконки не бустов (кнопки в диалогах)
+boosts['random'] = 'bows:item/random.png'
+
 providers = [{'type': 'space', 'advances': {' ': GAP_ADVANCE}}]
 small_providers = []
 table = []
