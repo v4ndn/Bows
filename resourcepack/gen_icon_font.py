@@ -13,11 +13,15 @@ import re
 ROOT = os.path.dirname(os.path.abspath(__file__))
 TYPES = os.path.join(ROOT, '..', 'bows', 'src', 'main', 'java', 'com', 'v4nden', 'bows', 'Boosts', 'Types')
 FONT = os.path.join(ROOT, 'assets', 'bows', 'font', 'boost_icons.json')
+# те же символы размером со строку текста — для таба
+SMALL_FONT = os.path.join(ROOT, 'assets', 'bows', 'font', 'boost_icons_small.json')
 TABLE = os.path.join(ROOT, '..', 'bows', 'src', 'main', 'resources', 'boost_icons.properties')
 
 FIRST_CODEPOINT = 0xE100
 ICON_HEIGHT = 16
 ICON_ASCENT = 12
+SMALL_ICON_HEIGHT = 8
+SMALL_ICON_ASCENT = 7
 # видимый зазор = advance пробела + 1px, который шрифт добавляет после символа
 GAP_ADVANCE = 10
 
@@ -49,16 +53,22 @@ for name in sorted(os.listdir(TYPES)):
     boosts[boost_id(source)] = texture_of(source)
 
 providers = [{'type': 'space', 'advances': {' ': GAP_ADVANCE}}]
+small_providers = []
 table = []
 for index, (boost, texture) in enumerate(sorted(boosts.items())):
     char = chr(FIRST_CODEPOINT + index)
     providers.append({'type': 'bitmap', 'file': texture, 'ascent': ICON_ASCENT, 'height': ICON_HEIGHT,
                       'chars': [char]})
+    small_providers.append({'type': 'bitmap', 'file': texture, 'ascent': SMALL_ICON_ASCENT,
+                            'height': SMALL_ICON_HEIGHT, 'chars': [char]})
     table.append(f'{boost}={FIRST_CODEPOINT + index:04X}')
 
 os.makedirs(os.path.dirname(FONT), exist_ok=True)
 with open(FONT, 'w', encoding='utf-8') as f:
     json.dump({'providers': providers}, f, indent=2, ensure_ascii=False)
+    f.write('\n')
+with open(SMALL_FONT, 'w', encoding='utf-8') as f:
+    json.dump({'providers': small_providers}, f, indent=2, ensure_ascii=False)
     f.write('\n')
 with open(TABLE, 'w', encoding='utf-8') as f:
     f.write('# сгенерировано resourcepack/gen_icon_font.py\n' + '\n'.join(table) + '\n')
