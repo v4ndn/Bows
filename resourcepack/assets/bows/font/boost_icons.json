@@ -455,6 +455,15 @@
       "chars": [
         ""
       ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:item/slime_ball.png",
+      "ascent": 12,
+      "height": 16,
+      "chars": [
+        ""
+      ]
     }
   ]
 }
