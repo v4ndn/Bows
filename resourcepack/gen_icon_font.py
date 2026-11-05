@@ -86,6 +86,46 @@ for icon, codepoint in sorted(codepoints.items(), key=lambda item: item[1]):
                             'height': SMALL_ICON_HEIGHT, 'chars': [char]})
     table.append(f'{icon}={codepoint:04X}')
 
+# ---- радар для таба: bows:radar, символ на каждое из 12 направлений ----
+# Сетка 4x4 точек: центр 2x2 — смотрящий, две точки края, ближайшие по углу —
+# направление на игрока (0 = вперёд, по часовой). Символы Брайля для этого не
+# годятся: у них в шрифте разная ширина, и колонки таба бы съезжали.
+from PIL import Image
+import math
+
+RADAR_FONT = os.path.join(ROOT, 'assets', 'bows', 'font', 'radar.json')
+RADAR_TEXTURES = os.path.join(ROOT, 'assets', 'bows', 'textures', 'font', 'radar')
+RADAR_FIRST_CODEPOINT = 0xE200
+RADAR_SECTORS = 12
+ring = [(x, y) for y in range(4) for x in range(4) if x in (0, 3) or y in (0, 3)]
+
+
+def cell_angle(cell):
+    return math.degrees(math.atan2(cell[0] - 1.5, -(cell[1] - 1.5))) % 360
+
+
+def angle_diff(a, b):
+    return abs((a - b + 180) % 360 - 180)
+
+
+os.makedirs(RADAR_TEXTURES, exist_ok=True)
+radar_providers = []
+for sector in range(RADAR_SECTORS):
+    lit = {(1, 1), (2, 1), (1, 2), (2, 2)}
+    lit.update(sorted(ring, key=lambda c: angle_diff(cell_angle(c), sector * 360 / RADAR_SECTORS))[:2])
+    image = Image.new('RGBA', (8, 8), (0, 0, 0, 0))
+    for x, y in lit:
+        image.putpixel((x * 2, y * 2), (255, 255, 255, 255))
+    # почти прозрачный пиксель в крайнем столбце: ширина символа считается по
+    # последнему непрозрачному пикселю, так у всех направлений она одинаковая
+    image.putpixel((6, 7), (255, 255, 255, 1))
+    image.save(os.path.join(RADAR_TEXTURES, f'{sector}.png'))
+    radar_providers.append({'type': 'bitmap', 'file': f'bows:font/radar/{sector}.png', 'ascent': 7,
+                            'height': 8, 'chars': [chr(RADAR_FIRST_CODEPOINT + sector)]})
+with open(RADAR_FONT, 'w', encoding='utf-8') as f:
+    json.dump({'providers': radar_providers}, f, indent=2, ensure_ascii=False)
+    f.write('\n')
+
 os.makedirs(os.path.dirname(FONT), exist_ok=True)
 with open(FONT, 'w', encoding='utf-8') as f:
     json.dump({'providers': providers}, f, indent=2, ensure_ascii=False)
