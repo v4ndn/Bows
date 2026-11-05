@@ -30,9 +30,9 @@ BLOCK_TEXTURES = {'glass': 'minecraft:block/glass.png', 'tnt': 'minecraft:block/
 
 
 def texture_of(source):
-    icon = re.search(r'\.setIcon\("([a-z0-9_]+)"\)', source)
+    icon = re.search(r'\.setIcon\("(?:([a-z0-9_]+):)?([a-z0-9_]+)"\)', source)
     if icon:
-        return f'bows:item/{icon.group(1)}.png'
+        return f'{icon.group(1) or "bows"}:item/{icon.group(2)}.png'
     material = re.search(r'\.setMaterial\(Material\.([A-Z0-9_]+)\)', source).group(1).lower()
     return BLOCK_TEXTURES.get(material, f'minecraft:item/{material}.png')
 

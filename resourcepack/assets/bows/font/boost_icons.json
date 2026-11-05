@@ -437,6 +437,24 @@
       "chars": [
         ""
       ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:item/iron_helmet.png",
+      "ascent": 12,
+      "height": 16,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:item/glistering_melon_slice.png",
+      "ascent": 12,
+      "height": 16,
+      "chars": [
+        ""
+      ]
     }
   ]
 }
