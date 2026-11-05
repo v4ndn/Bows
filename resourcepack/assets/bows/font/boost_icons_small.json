@@ -254,7 +254,7 @@
     },
     {
       "type": "bitmap",
-      "file": "bows:item/random.png",
+      "file": "minecraft:item/ghast_tear.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -263,7 +263,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/ghast_tear.png",
+      "file": "minecraft:item/diamond.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -272,7 +272,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/diamond.png",
+      "file": "minecraft:item/bowl.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -281,7 +281,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/bowl.png",
+      "file": "minecraft:item/totem_of_undying.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -290,7 +290,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/totem_of_undying.png",
+      "file": "minecraft:item/rabbit_foot.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -299,7 +299,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/rabbit_foot.png",
+      "file": "minecraft:item/gray_dye.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -308,7 +308,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/gray_dye.png",
+      "file": "minecraft:item/heart_of_the_sea.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -317,7 +317,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/heart_of_the_sea.png",
+      "file": "minecraft:item/light_blue_dye.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -326,7 +326,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/light_blue_dye.png",
+      "file": "minecraft:item/emerald.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -335,7 +335,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/emerald.png",
+      "file": "bows:item/teleportclosest.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -344,7 +344,7 @@
     },
     {
       "type": "bitmap",
-      "file": "bows:item/teleportclosest.png",
+      "file": "bows:item/teleportrandom.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -353,7 +353,7 @@
     },
     {
       "type": "bitmap",
-      "file": "bows:item/teleportrandom.png",
+      "file": "minecraft:item/nautilus_shell.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -362,7 +362,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/nautilus_shell.png",
+      "file": "bows:item/timestop.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -371,7 +371,7 @@
     },
     {
       "type": "bitmap",
-      "file": "bows:item/timestop.png",
+      "file": "minecraft:block/tnt_side.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -380,7 +380,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:block/tnt_side.png",
+      "file": "minecraft:item/nether_brick.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -389,7 +389,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/nether_brick.png",
+      "file": "minecraft:item/light_gray_dye.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -398,7 +398,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/light_gray_dye.png",
+      "file": "bows:item/random.png",
       "ascent": 7,
       "height": 8,
       "chars": [

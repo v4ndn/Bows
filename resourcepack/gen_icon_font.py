@@ -53,18 +53,38 @@ for name in sorted(os.listdir(TYPES)):
     boosts[boost_id(source)] = texture_of(source)
 
 # иконки не бустов (кнопки в диалогах)
-boosts['random'] = 'bows:item/random.png'
+EXTRA_ICONS = {'random': 'bows:item/random.png'}
+
+# коды символов только добавляются, а не пересчитываются: у игроков может быть
+# старый пак (сервер раздаёт тот, что был при его запуске), и сдвиг кодов
+# показал бы чужие иконки. Новые иконки получают следующий свободный код.
+codepoints = {}
+if os.path.exists(TABLE):
+    for line in open(TABLE, encoding='utf-8'):
+        if '=' in line and not line.startswith('#'):
+            key, value = line.strip().split('=')
+            codepoints[key] = int(value, 16)
+icons = dict(sorted(boosts.items()))
+icons.update(EXTRA_ICONS)
+next_codepoint = max(codepoints.values(), default=FIRST_CODEPOINT - 1) + 1
+for icon in icons:
+    if icon not in codepoints:
+        codepoints[icon] = next_codepoint
+        next_codepoint += 1
 
 providers = [{'type': 'space', 'advances': {' ': GAP_ADVANCE}}]
 small_providers = []
 table = []
-for index, (boost, texture) in enumerate(sorted(boosts.items())):
-    char = chr(FIRST_CODEPOINT + index)
+for icon, codepoint in sorted(codepoints.items(), key=lambda item: item[1]):
+    if icon not in icons:
+        continue  # буст удалён — код остаётся занятым, но символ больше не нужен
+    char = chr(codepoint)
+    texture = icons[icon]
     providers.append({'type': 'bitmap', 'file': texture, 'ascent': ICON_ASCENT, 'height': ICON_HEIGHT,
                       'chars': [char]})
     small_providers.append({'type': 'bitmap', 'file': texture, 'ascent': SMALL_ICON_ASCENT,
                             'height': SMALL_ICON_HEIGHT, 'chars': [char]})
-    table.append(f'{boost}={FIRST_CODEPOINT + index:04X}')
+    table.append(f'{icon}={codepoint:04X}')
 
 os.makedirs(os.path.dirname(FONT), exist_ok=True)
 with open(FONT, 'w', encoding='utf-8') as f:
