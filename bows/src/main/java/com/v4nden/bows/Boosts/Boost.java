@@ -164,15 +164,22 @@ public class Boost implements Listener {
         return false;
     }
 
+    // редкости 1..5 — звёзды; STARTER_RARITY — отдельная редкость стартовых бустов
+    public static final int STARTER_RARITY = 6;
+    public static final String STARTER_COLOR = "#5fd0ff";
+    private static final List<String> RARITY_COLORS = List.of("#fafafa", "#4aff65", "#4a89ff", "#834aff",
+            "#e97218", STARTER_COLOR);
+
+    /** Метка редкости с цветом: « [★★★]» или « [▼]» у стартовых. */
+    public String rarityLabel() {
+        String mark = rarity == STARTER_RARITY ? "▼" : "★".repeat(rarity);
+        return ChatColor.of(RARITY_COLORS.get(rarity - 1)) + " [" + mark + "]";
+    }
+
     /** Объявление в чат об использовании буста — единственное сообщение бустов. */
     public void broadcastUse() {
-        List<String> rarityColors = List.of("#fafafa", "#4aff65", "#4a89ff", "#834aff", "#e97218");
         BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(),
-                owner.getName()
-                        + " использует "
-                        + name
-                        + ChatColor.of(rarityColors.get(rarity - 1))
-                        + " [" + "★".repeat(rarity) + "]");
+                owner.getName() + " использует " + name + rarityLabel());
     }
 
     /** Отключить буст без активации: предмет убирается из оборота вызывающим кодом. */
@@ -194,19 +201,9 @@ public class Boost implements Listener {
     }
 
     public ItemStack createItem() {
-        List<String> rarityColors = new ArrayList<String>();
-        rarityColors.add("#fafafa");
-        rarityColors.add("#4aff65");
-        rarityColors.add("#4a89ff");
-        rarityColors.add("#834aff");
-        rarityColors.add("#e97218");
-
-        // ------------
         ItemStack itemStack = new ItemStack(material, 1);
         ItemMeta meta = itemStack.getItemMeta();
-        meta.setDisplayName(ChatColor.of("#e97218") + "[🏹] " + ChatColor.of("#f4ebe5") + name
-                + ChatColor.of(rarityColors.get(rarity - 1))
-                + " [" + "★".repeat(rarity) + "]");
+        meta.setDisplayName(ChatColor.of("#e97218") + "[🏹] " + ChatColor.of("#f4ebe5") + name + rarityLabel());
 
         ArrayList<String> lore = new ArrayList<>();
         for (String line : description.split("\n")) {

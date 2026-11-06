@@ -25,7 +25,7 @@ public class LocatorBoost implements IBoostType {
                 .setDescription(ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
                         + "\n Воспроизводит звук эха на позиции\n ближайшего от владельца игрока,\n действует 10 секунд")
                 .setRunnable(consumer -> {
-                    LivingEntity closest = Game.targetsExcept(consumer).stream()
+                    LivingEntity closest = Game.selectableTargetsExcept(consumer).stream()
                             .min(Comparator.comparingDouble(
                                     (gamePlayer) -> gamePlayer.getLocation().distance(consumer.getLocation())))
                             .orElse(null);

@@ -9,9 +9,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import com.v4nden.bows.Boosts.Types.ChainmailBoost;
 import com.v4nden.bows.Boosts.Types.DoubleJumpBoost;
-import com.v4nden.bows.Boosts.Types.HasteBoost;
-import com.v4nden.bows.Boosts.Types.IronHelmetBoost;
+import com.v4nden.bows.Boosts.Types.GathererBoost;
+import com.v4nden.bows.Boosts.Types.GiantBoost;
 import com.v4nden.bows.Boosts.Types.QuiverBoost;
 import com.v4nden.bows.Boosts.Types.SecondChanceBoost;
 import com.v4nden.bows.Boosts.Types.SmallBoost;
@@ -48,10 +49,11 @@ public class StarterBoosts {
     private static void applyPassive(Player player, StarterBoostTypes type) {
         switch (type) {
             case SMALL -> SmallBoost.apply(player);
-            case HASTE -> HasteBoost.apply(player);
             case TOUGH -> ToughBoost.apply(player);
-            case IRONHELMET -> IronHelmetBoost.apply(player);
+            case CHAINMAIL -> ChainmailBoost.apply(player);
+            case GATHERER -> GathererBoost.apply(player);
             case DOUBLEJUMP -> DoubleJumpBoost.apply(player);
+            case GIANT -> GiantBoost.apply(player);
             case QUIVER -> {
                 ItemStack arrows = player.getInventory().getItem(1);
                 if (arrows != null && arrows.getType() == Material.ARROW) {
@@ -66,8 +68,9 @@ public class StarterBoosts {
     /** Снимает эффекты пассивных стартовых бустов (конец игры, выбывание). */
     public static void resetPassive(Player player) {
         PlayerSize.reset(player);
-        HasteBoost.reset(player);
+        GathererBoost.reset(player);
         ToughBoost.reset(player);
+        GiantBoost.resetHealth(player);
     }
 
     /** Сколько стрел игрок может носить: больше с «Колчаном». */

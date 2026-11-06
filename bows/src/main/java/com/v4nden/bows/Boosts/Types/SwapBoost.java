@@ -20,7 +20,7 @@ public class SwapBoost implements IBoostType {
     public Boost create(Player player) {
         return new BoostGenerator()
                 .setMaterial(Material.EMERALD)
-                .setRarity(5)
+                .setRarity(Boost.STARTER_RARITY)
                 .setId("swap")
                 .setName("Обмен")
                 .setDescription(ChatColor.of("#a6a6a6") + "Стартовый буст:" + ChatColor.RESET
@@ -28,6 +28,8 @@ public class SwapBoost implements IBoostType {
                 .setRunnable(consumer -> {
                     List<Player> others = new ArrayList<>(Game.gamePlayers);
                     others.remove(consumer);
+                    // владельцы «Неуловимого» в случайный выбор не попадают
+                    others.removeIf(ElusiveBoost::has);
                     if (others.isEmpty()) {
                         return;
                     }

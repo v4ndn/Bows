@@ -25,7 +25,7 @@ public class GlowRandomBoost implements IBoostType {
                 .setDescription(ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
                         + "\n Спустя задержку перед применением\n выдаёт случайному игрокув текущей\n игре эффект свечения, звук задержки\n перед эффектом слышан\n как владельцу, так и\n случайному игроку")
                 .setRunnable(consumer -> {
-                    List<LivingEntity> others = Game.targetsExcept(consumer);
+                    List<LivingEntity> others = Game.selectableTargetsExcept(consumer);
                     if (others.isEmpty()) {
                         return;
                     }

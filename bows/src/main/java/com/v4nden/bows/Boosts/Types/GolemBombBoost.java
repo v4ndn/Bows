@@ -64,7 +64,7 @@ public class GolemBombBoost implements IBoostType {
                         @Override
                         public void run() {
                             ticks++;
-                            LivingEntity target = Game.targetsExcept(consumer).stream()
+                            LivingEntity target = Game.selectableTargetsExcept(consumer).stream()
                                     .filter(t -> t.isValid() && t.getWorld().equals(golem.getWorld()))
                                     .min(Comparator.comparingDouble(
                                             t -> t.getLocation().distanceSquared(golem.getLocation())))

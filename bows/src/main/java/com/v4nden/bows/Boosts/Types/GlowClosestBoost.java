@@ -24,7 +24,7 @@ public class GlowClosestBoost implements IBoostType {
                 .setDescription(ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
                         + "\n Спустя задержку перед применением\n выдаёт ближайшему к владельцу\n игроку эффект свечения, звук\n задержки перед эффектом\n слышан как владельцу, так и\n ближайшему игроку")
                 .setRunnable(consumer -> {
-                    LivingEntity closest = Game.targetsExcept(consumer).stream()
+                    LivingEntity closest = Game.selectableTargetsExcept(consumer).stream()
                             .min(Comparator.comparingDouble(
                                     (gamePlayer) -> gamePlayer.getLocation().distance(consumer.getLocation())))
                             .orElse(null);

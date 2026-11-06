@@ -16,7 +16,7 @@ public class RerollBoost implements IBoostType {
     public Boost create(Player player) {
         return new BoostGenerator()
                 .setMaterial(Material.DIAMOND)
-                .setRarity(5)
+                .setRarity(Boost.STARTER_RARITY)
                 .setId("reroll")
                 .setName("Реролл")
                 .setDescription(ChatColor.of("#a6a6a6") + "Стартовый буст:" + ChatColor.RESET

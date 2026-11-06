@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -12,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -21,6 +24,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -35,6 +39,8 @@ import com.v4nden.bows.Bows;
 import com.v4nden.bows.BowsUtils;
 import com.v4nden.bows.Boosts.BoostTypes;
 import com.v4nden.bows.Boosts.StarterBoosts;
+import com.v4nden.bows.Boosts.Types.ElusiveBoost;
+import com.v4nden.bows.Boosts.Types.GiantBoost;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -45,6 +51,8 @@ public class Game implements Listener {
     public static boolean isTest = false;
     public static Location gameLocation;
     public static long gameStart;
+    // участников на старте игры (для бустов, зависящих от размера лобби)
+    public static int startPlayerCount = 0;
     public static ArrayList<Player> gamePlayers = new ArrayList<Player>();
 
     private static int taskActionTimer;
@@ -66,15 +74,25 @@ public class Game implements Listener {
         return targets;
     }
 
+    // цели для бустов, которые выбирают одну случайную или ближайшую цель:
+    // владельцы «Неуловимого» в выбор не попадают
+    public static List<LivingEntity> selectableTargetsExcept(Player owner) {
+        List<LivingEntity> targets = targetsExcept(owner);
+        targets.removeIf(target -> target instanceof Player player && ElusiveBoost.has(player));
+        return targets;
+    }
+
     public static void startGame(Location location) {
         startGame(location, Bukkit.getOnlinePlayers(), false);
     }
 
-    public static void startTestGame(Player player) {
-        startGame(player.getLocation(), List.of(player), true);
+    public static void startGame(Location location, Collection<? extends Player> players, boolean test) {
+        startGame(location, players, test, Map.of());
     }
 
-    public static void startGame(Location location, Collection<? extends Player> players, boolean test) {
+    /** spawns — заранее назначенные (и сгенерированные) точки появления участников. */
+    public static void startGame(Location location, Collection<? extends Player> players, boolean test,
+            Map<UUID, Location> spawns) {
         if (isRunning)
             stopGame();
         isRunning = true;
@@ -82,6 +100,7 @@ public class Game implements Listener {
         gameLocation = location;
         gamePlayers.clear();
         KillAnnouncer.reset();
+        GiantBoost.reset();
         StarterChoiceDialog.reset();
 
         gameStart = System.currentTimeMillis();
@@ -89,6 +108,7 @@ public class Game implements Listener {
         Random random = new Random();
 
         gamePlayers.addAll(players);
+        startPlayerCount = gamePlayers.size();
         gamePlayers.forEach((player) -> {
             resetPlayerState(player);
             player.setGameMode(GameMode.SURVIVAL);
@@ -97,13 +117,21 @@ public class Game implements Listener {
             player.getInventory().setItem(1, new ItemStack(Material.ARROW, 20));
             // стартовый буст игрок выбирает сам в окне (или играет без него)
             StarterChoiceDialog.show(player);
-            player.teleport(location.getWorld()
-                    .getHighestBlockAt(
-                            location.add(random.nextInt(-100, 100), 0,
-                                    random.nextInt(-100, 100)))
-                    // location.add(0, 0, 0))
-                    .getLocation().add(0, 1, 0));
+            // своя точка, если назначена; clone: add() менял бы саму точку центра
+            Location spawn = spawns.getOrDefault(player.getUniqueId(),
+                    location.clone().add(random.nextInt(-100, 100), 0, random.nextInt(-100, 100)));
+            player.teleport(location.getWorld().getHighestBlockAt(spawn).getLocation().add(.5, 1, .5));
         });
+        // кто не попал в участники (зашёл во время подготовки) — наблюдатель, как вошедшие после старта
+        if (!test) {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (!gamePlayers.contains(p)) {
+                    p.getInventory().clear();
+                    p.setGameMode(GameMode.SPECTATOR);
+                    p.teleport(location.getWorld().getHighestBlockAt(location).getLocation().add(.5, 2, .5));
+                }
+            }
+        }
         taskTabInfos = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, () -> {
 
             String center = Bukkit.getWorld("world").getWorldBorder().getCenter().getBlockX() + ", "
@@ -195,6 +223,7 @@ public class Game implements Listener {
         }
         gamePlayers.clear();
         Dummies.clear();
+        GiantBoost.reset();
         Bukkit.getWorld("world").getWorldBorder().setCenter(0, 0);
         Bukkit.getWorld("world").getWorldBorder().setSize(500);
     }
@@ -241,10 +270,31 @@ public class Game implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void preventDamageFromOtherSources(EntityDamageByEntityEvent e) {
-        if (!(e.getDamager() instanceof Arrow) && !(e.getDamager() instanceof TNTPrimed)
-                && !(e.getDamager() instanceof LightningStrike)) {
+        // у взрыва TNT с источником (setSource) getDamager() — поджёгший игрок,
+        // поэтому смотрим и на прямую сущность урона, и на причину
+        Entity direct = e.getDamageSource().getDirectEntity();
+        boolean allowed = isAllowedDamager(e.getDamager()) || isAllowedDamager(direct)
+                || e.getCause() == DamageCause.ENTITY_EXPLOSION || e.getCause() == DamageCause.BLOCK_EXPLOSION
+                || e.getCause() == DamageCause.LIGHTNING;
+        if (!allowed) {
             e.setCancelled(true);
         }
+    }
+
+    private static final double EXPLOSION_DAMAGE_MULTIPLIER = .5;
+
+    // взрывы по игрокам — половина урона. LOWEST: раньше проверки на смертельный
+    // урон, иначе игрок выбывал бы от урона, который после уменьшения не убил бы
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void halveExplosionDamage(EntityDamageEvent e) {
+        if (e.getEntity() instanceof Player && (e.getCause() == DamageCause.ENTITY_EXPLOSION
+                || e.getCause() == DamageCause.BLOCK_EXPLOSION)) {
+            e.setDamage(e.getDamage() * EXPLOSION_DAMAGE_MULTIPLIER);
+        }
+    }
+
+    private static boolean isAllowedDamager(Entity entity) {
+        return entity instanceof Arrow || entity instanceof TNTPrimed || entity instanceof LightningStrike;
     }
 
     @EventHandler
@@ -305,6 +355,7 @@ public class Game implements Listener {
                     if (killer != null) {
                         Stats.increment(killer, Stats.KILLS);
                         KillAnnouncer.onKill(killer, p.getName());
+                        GiantBoost.onKill(killer);
                     }
                 }
                 Stats.forget(p);

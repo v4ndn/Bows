@@ -5,44 +5,38 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Husk;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mannequin;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.ItemStack;
 
 import com.v4nden.bows.BowsUtils;
+import com.v4nden.bows.Boosts.Types.GiantBoost;
+
+import net.kyori.adventure.text.Component;
 
 /**
  * Куклы для тестовой игры: мобы без своего поведения, на которых действуют
  * бусты наравне с участниками (см. Game.targets()).
  *
- * Хаск, а не зомби — не горит на солнце. Неосведомлённый моб (setAware(false))
- * не ходит и не атакует, но падает, отлетает от ударов и получает эффекты.
+ * Манекен (1.21.9+): выглядит как игрок, не враждебный — на мирной сложности
+ * не исчезает (хаск исчезал), сам не ходит и не атакует, но падает, отлетает
+ * от ударов и получает эффекты.
  */
 public class Dummies implements Listener {
     public static final List<LivingEntity> dummies = new ArrayList<>();
     private static int counter = 0;
 
     public static void spawn(Location location) {
-        Husk dummy = location.getWorld().spawn(location, Husk.class, husk -> {
-            husk.setAdult();
-            husk.setAware(false);
-            husk.setSilent(true);
-            husk.setPersistent(false);
-            husk.setRemoveWhenFarAway(false);
-            husk.setCanPickupItems(false);
-            husk.setCustomName("Кукла #" + (++counter));
-            husk.setCustomNameVisible(true);
-
-            EntityEquipment equipment = husk.getEquipment();
-            equipment.clear();
-            equipment.setHelmet(new ItemStack(Material.PLAYER_HEAD));
-            equipment.setHelmetDropChance(0);
+        Mannequin dummy = location.getWorld().spawn(location, Mannequin.class, mannequin -> {
+            mannequin.setImmovable(false); // отлетает от взрывов, ветра и т.д.
+            mannequin.setSilent(true);
+            mannequin.setPersistent(false);
+            mannequin.setCustomName("Кукла #" + (++counter));
+            mannequin.setCustomNameVisible(true);
+            mannequin.setDescription(Component.empty());
         });
         dummies.add(dummy);
     }
@@ -70,6 +64,7 @@ public class Dummies implements Listener {
         Player killer = e.getEntity().getKiller();
         if (Game.isRunning && killer != null) {
             KillAnnouncer.onKill(killer, e.getEntity().getCustomName());
+            GiantBoost.onKill(killer);
         }
     }
 }

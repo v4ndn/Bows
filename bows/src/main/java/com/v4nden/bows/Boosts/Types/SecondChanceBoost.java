@@ -26,7 +26,7 @@ public class SecondChanceBoost implements IBoostType {
     public Boost create(Player player) {
         return new BoostGenerator()
                 .setMaterial(Material.TOTEM_OF_UNDYING)
-                .setRarity(5)
+                .setRarity(Boost.STARTER_RARITY)
                 .setId(ID)
                 .setName("Второй шанс")
                 .setDescription(ChatColor.of("#a6a6a6") + "Стартовый буст:" + ChatColor.RESET

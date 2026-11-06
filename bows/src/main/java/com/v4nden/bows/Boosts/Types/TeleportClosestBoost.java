@@ -26,7 +26,7 @@ public class TeleportClosestBoost implements IBoostType {
                 .setDescription(ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
                         + "\n Спустя задержку телепортирует\n владельца к ближайшему\n игроку в текущей игре, звук\n задержки перед телепортацией\n слышан как владельцу, так и\n ближайшему игроку")
                 .setRunnable(consumer -> {
-                    LivingEntity closest = Game.targetsExcept(consumer).stream()
+                    LivingEntity closest = Game.selectableTargetsExcept(consumer).stream()
                             .min(Comparator.comparingDouble(
                                     (gamePlayer) -> gamePlayer.getLocation().distance(consumer.getLocation())))
                             .orElse(null);

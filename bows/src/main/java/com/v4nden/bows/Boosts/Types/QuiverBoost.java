@@ -15,7 +15,7 @@ public class QuiverBoost implements IBoostType {
     public Boost create(Player player) {
         return new BoostGenerator()
                 .setMaterial(Material.LEATHER)
-                .setRarity(5)
+                .setRarity(Boost.STARTER_RARITY)
                 .setId(ID)
                 .setName("Колчан")
                 .setDescription(ChatColor.of("#a6a6a6") + "Пассивный стартовый буст:" + ChatColor.RESET

@@ -27,7 +27,7 @@ public class TeleportRandomBoost implements IBoostType {
                 .setDescription(ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
                         + "\n Спустя задержку телепортирует\n владельца к случайному\n игроку в текущей игре, звук\n задержки перед телепортацией\n слышан как владельцу, так и\n случайному игроку")
                 .setRunnable(consumer -> {
-                    List<LivingEntity> others = Game.targetsExcept(consumer);
+                    List<LivingEntity> others = Game.selectableTargetsExcept(consumer);
                     if (others.isEmpty()) {
                         return;
                     }

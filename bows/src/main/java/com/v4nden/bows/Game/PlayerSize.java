@@ -30,6 +30,10 @@ public class PlayerSize {
     // номер последнего временного изменения: старый таймер не отменяет новое
     private static final Map<UUID, Integer> temporaryVersion = new HashMap<>();
 
+    public static double getBase(Player player) {
+        return base.getOrDefault(player.getUniqueId(), 1.0);
+    }
+
     public static void setBase(Player player, double scale) {
         base.put(player.getUniqueId(), scale);
         apply(player);

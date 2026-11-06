@@ -154,7 +154,7 @@ public class InfoDialog {
 
     private static Component tabLabel(int tab) {
         if (tab == STARTER_TAB) {
-            return Component.text("Стартовые", TextColor.fromHexString("#e97218"));
+            return Component.text("▼", TextColor.fromHexString(Boost.STARTER_COLOR));
         }
         return Component.text("★".repeat(tab + 1), TextColor.fromHexString(RARITY_COLORS[tab]));
     }

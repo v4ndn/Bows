@@ -5,11 +5,16 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import com.v4nden.bows.Game.Game;
+import com.v4nden.bows.Game.GameStarter;
 
 public class StopGame implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (GameStarter.isPreparing()) {
+            GameStarter.cancel();
+            return true;
+        }
         if (!Game.isRunning) {
             sender.sendMessage("Игра не запущена");
             return true;

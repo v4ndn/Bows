@@ -13,10 +13,13 @@ import com.v4nden.bows.Boosts.Boost;
 import com.v4nden.bows.Boosts.BoostCommand.BoostCommand;
 import com.v4nden.bows.Boosts.BoostCommand.BoostCommandTab;
 import com.v4nden.bows.Boosts.Types.DoubleJumpBoost;
-import com.v4nden.bows.Boosts.Types.TreecapitatorBoost;
+import com.v4nden.bows.Boosts.Types.GathererBoost;
 import com.v4nden.bows.Game.Dummies;
 import com.v4nden.bows.Game.Game;
+import com.v4nden.bows.Game.GameStarter;
+import com.v4nden.bows.Game.PeacefulExplosions;
 import com.v4nden.bows.Game.RadiusHighlight;
+import com.v4nden.bows.Utils.ResourcePackSync;
 import com.v4nden.bows.Game.TabArrows;
 import com.v4nden.bows.Game.GameCommand.DummyCommand;
 import com.v4nden.bows.Game.GameCommand.HudTextCommand;
@@ -46,10 +49,13 @@ public class Bows extends JavaPlugin {
 
         Bukkit.getServer().getPluginManager().registerEvents(new Game(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new Dummies(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new PeacefulExplosions(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new DoubleJumpBoost.Handler(), this);
-        Bukkit.getServer().getPluginManager().registerEvents(new TreecapitatorBoost.Handler(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new GathererBoost.Handler(), this);
         TabArrows.start();
         RadiusHighlight.start();
+        Bukkit.getServer().getPluginManager().registerEvents(new ResourcePackSync(), this);
+        ResourcePackSync.sync();
 
         getLogger().info("All settled");
 
@@ -57,6 +63,7 @@ public class Bows extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        GameStarter.cancel();
         Game.stopGame();
         TabArrows.stop();
         RadiusHighlight.stop();
