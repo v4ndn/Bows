@@ -57,7 +57,6 @@ public class BowsUtils {
         List<double[]> points = ArcPointsGenerator.getArcPoints(radius, 0, 360, 10);
 
         points.forEach(point -> {
-            System.out.println(point[0] + " " + point[1]);
             location.getWorld().spawnParticle(particle, location.add(point[0], 0, point[1]), 1, 0, 0, 0, .01f);
         });
 

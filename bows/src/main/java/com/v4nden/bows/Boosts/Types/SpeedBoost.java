@@ -17,7 +17,7 @@ import net.md_5.bungee.api.ChatColor;
 public class SpeedBoost implements IBoostType {
     public Boost create(Player player) {
         return new BoostGenerator()
-                .setMaterial(Material.LIGHT_BLUE_DYE).setRarity(1).setId("spedd").setName("Скорость")
+                .setMaterial(Material.LIGHT_BLUE_DYE).setRarity(1).setId("speed").setName("Скорость")
                 .setDescription(ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
                         + "\n Накладывает на владельца\n буста эффект скорости\n первого уровня на 10 секунд")
                 .setRunnable(consumer -> {

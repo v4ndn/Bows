@@ -15,6 +15,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -38,7 +40,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class Boost implements Listener {
     public Player owner;
-    public static Consumer<Player> runnable;
+    private Consumer<Player> runnable;
 
     private Material material;
     private String id;
@@ -46,17 +48,25 @@ public class Boost implements Listener {
     private String description;
     private int rarity;
     private float delay;
+    private String icon;
 
     private ItemStack item;
 
     private UUID uid;
 
     private boolean used = false;
+    // слот хотбара, из которого предмет нельзя переложить; -1 — можно
+    private int lockedSlot = -1;
+    private boolean passive = false;
+    private double previewRadius = 0;
+
+    // живые (ещё не использованные) бусты по uid предмета
+    private static final Map<UUID, Boost> registry = new HashMap<>();
 
     private int inventoryCheck;
 
     public Boost(Player owner, Material material, int rarity, String id, String name, String description,
-            Consumer<Player> runnable, float delay) {
+            Consumer<Player> runnable, float delay, String icon) {
         this.runnable = runnable;
         this.owner = owner;
 
@@ -66,11 +76,13 @@ public class Boost implements Listener {
         this.description = description;
         this.rarity = rarity;
         this.delay = delay;
+        this.icon = icon;
 
         this.uid = UUID.randomUUID();
         this.item = createItem();
 
         Bows.instance.getServer().getPluginManager().registerEvents(this, Bows.instance);
+        registry.put(this.uid, this);
 
     }
 
@@ -89,7 +101,85 @@ public class Boost implements Listener {
         this.item = createItem();
 
         Bows.instance.getServer().getPluginManager().registerEvents(this, Bows.instance);
+        registry.put(this.uid, this);
 
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public Material getMaterial() {
+        return this.material;
+    }
+
+    /** Модель предмета: "<icon>" из нашего пака, "ns:model" — любая, null — вид материала. */
+    public String getIcon() {
+        return this.icon;
+    }
+
+    public int getRarity() {
+        return this.rarity;
+    }
+
+    public double getPreviewRadius() {
+        return this.previewRadius;
+    }
+
+    public void setPreviewRadius(double radius) {
+        this.previewRadius = radius;
+    }
+
+    public void setPassive(boolean passive) {
+        this.passive = passive;
+    }
+
+    public boolean isPassive() {
+        return this.passive;
+    }
+
+    public void setLockedSlot(int slot) {
+        this.lockedSlot = slot;
+    }
+
+    /** Буст по его предмету, если он ещё не использован. */
+    public static Boost fromItem(ItemStack item) {
+        if (item == null || item.getItemMeta() == null || item.getItemMeta().getLore() == null
+                || item.getItemMeta().getLore().isEmpty()) {
+            return null;
+        }
+        try {
+            return registry.get(UUID.fromString(ChatColor.stripColor(item.getItemMeta().getLore().getLast())));
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    private static boolean hasLockedSlot(Player player, int slot) {
+        for (Boost boost : registry.values()) {
+            if (boost.owner.equals(player) && boost.lockedSlot == slot) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Объявление в чат об использовании буста — единственное сообщение бустов. */
+    public void broadcastUse() {
+        List<String> rarityColors = List.of("#fafafa", "#4aff65", "#4a89ff", "#834aff", "#e97218");
+        BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(),
+                owner.getName()
+                        + " использует "
+                        + name
+                        + ChatColor.of(rarityColors.get(rarity - 1))
+                        + " [" + "★".repeat(rarity) + "]");
+    }
+
+    /** Отключить буст без активации: предмет убирается из оборота вызывающим кодом. */
+    public void dispose() {
+        this.used = true;
+        HandlerList.unregisterAll(this);
+        registry.remove(this.uid);
     }
 
     public ItemStack getItem() {
@@ -129,6 +219,10 @@ public class Boost implements Listener {
 
         meta.setLore(lore);
         meta.setMaxStackSize(1);
+        if (icon != null) {
+            // "timestop" — модель из нашего пака, "minecraft:iron_helmet" — любая другая
+            meta.setItemModel(icon.contains(":") ? NamespacedKey.fromString(icon) : new NamespacedKey("bows", icon));
+        }
 
         itemStack.setItemMeta(meta);
 
@@ -139,12 +233,10 @@ public class Boost implements Listener {
     public void onActivate(PlayerSwapHandItemsEvent e) {
 
         if (!e.getPlayer().equals(owner)) {
-            System.out.println(createLogMessage("NOT MY BUSINESS"));
             return;
         }
 
         if (this.used) {
-            System.out.println(createLogMessage("UNREGISTER CUZ USED"));
             e.getHandlers().unregister(this);
         }
 
@@ -153,7 +245,11 @@ public class Boost implements Listener {
             return;
         }
 
-        System.out.println(createLogMessage("swap event"));
+        // пассивный буст не активируется и остаётся в слоте
+        if (this.passive && compareUids(this.item, e.getOffHandItem())) {
+            e.setCancelled(true);
+            return;
+        }
 
         if (compareUids(this.item, e.getOffHandItem())) {
             if (e.getMainHandItem().getType() != Material.AIR) {
@@ -162,22 +258,12 @@ public class Boost implements Listener {
             }
             System.out.println(createLogMessage("used"));
 
-            List<String> rarityColors = new ArrayList<String>();
-            rarityColors.add("#fafafa");
-            rarityColors.add("#4aff65");
-            rarityColors.add("#4a89ff");
-            rarityColors.add("#834aff");
-            rarityColors.add("#e97218");
-
             if (this.delay != 0) {
-                System.out.println(createLogMessage("has delay"));
                 owner.setCooldown(this.item, Math.round(this.delay * 20));
 
                 for (float i = 0; i <= this.delay; i += 0.25f) {
                     final float fi = Float.valueOf(i);
                     Bukkit.getServer().getScheduler().runTaskLater(Bows.instance, () -> {
-                        System.out.println(fi);
-
                         owner.getWorld().playSound(owner.getLocation(), Sound.ENTITY_BREEZE_CHARGE, 10,
                                 Double.valueOf(2.0 * (fi / (this.delay))).floatValue());
                     }, Math.round(i * 20));
@@ -186,26 +272,18 @@ public class Boost implements Listener {
                     owner.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
                     e.getHandlers().unregister(this);
                     this.used = true;
+                    registry.remove(this.uid);
                     runnable.accept(owner);
-                    BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(),
-                            owner.getName()
-                                    + " использует "
-                                    + name
-                                    + ChatColor.of(rarityColors.get(rarity - 1))
-                                    + " [" + "★".repeat(rarity) + "]");
+                    broadcastUse();
                 }, Math.round(this.delay * 20));
                 return;
             } else {
                 this.used = true;
+                registry.remove(this.uid);
                 e.setOffHandItem(new ItemStack(Material.AIR));
                 e.getHandlers().unregister(this);
                 runnable.accept(owner);
-                BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(),
-                        owner.getName()
-                                + " использует "
-                                + name
-                                + ChatColor.of(rarityColors.get(rarity - 1))
-                                + " [" + "★".repeat(rarity) + "]");
+                broadcastUse();
             }
 
         }
@@ -236,6 +314,12 @@ public class Boost implements Listener {
         if (this.used) {
             e.getHandlers().unregister(this);
         }
+        if (lockedSlot >= 0 && !this.used && e.getWhoClicked().equals(owner)
+                && (compareUids(e.getCurrentItem(), this.item) || compareUids(e.getCursor(), this.item)
+                        || (e.getClick() == ClickType.NUMBER_KEY && e.getHotbarButton() == lockedSlot))) {
+            e.setCancelled(true);
+            return;
+        }
         if (e.getClickedInventory() == null || e.getInventory() == null) {
             e.setCancelled(true);
             return;
@@ -248,7 +332,12 @@ public class Boost implements Listener {
                 e.setCancelled(true);
                 return;
             } else {
-                e.setCancelled(false);
+                // не снимаем отмену, если клик меняет местами с закреплённым слотом
+                boolean intoLockedSlot = e.getClick() == ClickType.NUMBER_KEY
+                        && hasLockedSlot(owner, e.getHotbarButton());
+                if (!intoLockedSlot) {
+                    e.setCancelled(false);
+                }
                 return;
             }
         }
@@ -261,7 +350,7 @@ public class Boost implements Listener {
             e.getHandlers().unregister(this);
         }
         if (compareUids(e.getOldCursor(), this.item)) {
-            if (e.getInventorySlots().contains(40)) {
+            if (lockedSlot >= 0 || e.getInventorySlots().contains(40)) {
                 e.setCancelled(true);
             }
         }

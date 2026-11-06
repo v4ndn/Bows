@@ -15,6 +15,9 @@ public class BoostGenerator {
     private String name;
     private String description;
     private float delay;
+    private String icon;
+    private boolean passive;
+    private double previewRadius;
     private Consumer<Player> runnable;
 
     public BoostGenerator() {
@@ -51,6 +54,24 @@ public class BoostGenerator {
         return this;
     }
 
+    // радиус вокруг владельца: пока буст в руке, цели в нём подсвечиваются (RadiusHighlight)
+    public BoostGenerator setPreviewRadius(double radius) {
+        this.previewRadius = radius;
+        return this;
+    }
+
+    // пассивный: действует, пока лежит у игрока; через F не активируется
+    public BoostGenerator setPassive(boolean passive) {
+        this.passive = passive;
+        return this;
+    }
+
+    // модель из ресурспака: bows:<icon>
+    public BoostGenerator setIcon(String icon) {
+        this.icon = icon;
+        return this;
+    }
+
     public BoostGenerator setRunnable(Consumer<Player> runnable) {
         this.runnable = runnable;
         return this;
@@ -59,11 +80,15 @@ public class BoostGenerator {
     public Boost build(Player owner) {
         this.description += "\n\n";
         this.description += ChatColor.of("#939393") + "⌚: "
-                + String.valueOf(this.delay > 0 ? this.delay : this.delay * 1000)
-                + (delay > 0 ? "s" : "ms");
+                + (this.passive ? "Пассивный"
+                        : this.delay == 0 ? "Моментально"
+                                : this.delay < 1 ? Math.round(this.delay * 1000) + "ms" : this.delay + "s");
         this.description += "\n";
 
-        return new Boost(owner, this.material, this.rarity, this.id, this.name, this.description,
-                this.runnable, this.delay);
+        Boost boost = new Boost(owner, this.material, this.rarity, this.id, this.name, this.description,
+                this.runnable, this.delay, this.icon);
+        boost.setPassive(this.passive);
+        boost.setPreviewRadius(this.previewRadius);
+        return boost;
     }
 }

@@ -14,8 +14,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <paper.libraries>${project.basedir}/../server/libraries</paper.libraries>
   </properties>
   <repositories>
   <repository>
@@ -34,6 +35,18 @@
       </repository>
   </repositories>
   
+  <!-- раньше версию и область gson задавал spigot-api; на сервере gson есть свой -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.11.0</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
 
     <dependency>
@@ -42,11 +55,134 @@
       <version>5.2.1</version>
       <scope>compile</scope>
     </dependency>
+    <!-- Paper API 1.21.11 и его библиотеки из server/libraries (их распаковывает paperclip
+         paper-1.21.11-132.jar), maven работает офлайн. На сервере они уже есть, в jar не попадают -->
     <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <version>1.21.4-R0.1-SNAPSHOT</version>
-      <scope>provided</scope>
+      <groupId>com.mojang</groupId>
+      <artifactId>brigadier</artifactId>
+      <version>1.3.10</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/com/mojang/brigadier/1.3.10/brigadier-1.3.10.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-api</artifactId>
+      <version>1.21.11-R0.1-SNAPSHOT</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/io/papermc/paper/paper-api/1.21.11-R0.1-SNAPSHOT/paper-api-1.21.11-R0.1-SNAPSHOT.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-api</artifactId>
+      <version>4.26.1</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/net/kyori/adventure-api/4.26.1/adventure-api-4.26.1.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-key</artifactId>
+      <version>4.26.1</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/net/kyori/adventure-key/4.26.1/adventure-key-4.26.1.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-text-minimessage</artifactId>
+      <version>4.26.1</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/net/kyori/adventure-text-minimessage/4.26.1/adventure-text-minimessage-4.26.1.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-text-serializer-commons</artifactId>
+      <version>4.26.1</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/net/kyori/adventure-text-serializer-commons/4.26.1/adventure-text-serializer-commons-4.26.1.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-text-serializer-gson</artifactId>
+      <version>4.26.1</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/net/kyori/adventure-text-serializer-gson/4.26.1/adventure-text-serializer-gson-4.26.1.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-text-serializer-json</artifactId>
+      <version>4.26.1</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/net/kyori/adventure-text-serializer-json/4.26.1/adventure-text-serializer-json-4.26.1.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-text-serializer-legacy</artifactId>
+      <version>4.26.1</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/net/kyori/adventure-text-serializer-legacy/4.26.1/adventure-text-serializer-legacy-4.26.1.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-text-serializer-plain</artifactId>
+      <version>4.26.1</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/net/kyori/adventure-text-serializer-plain/4.26.1/adventure-text-serializer-plain-4.26.1.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>examination-api</artifactId>
+      <version>1.3.0</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/net/kyori/examination-api/1.3.0/examination-api-1.3.0.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>examination-string</artifactId>
+      <version>1.3.0</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/net/kyori/examination-string/1.3.0/examination-string-1.3.0.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>option</artifactId>
+      <version>1.1.0</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/net/kyori/option/1.1.0/option-1.1.0.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.md-5</groupId>
+      <artifactId>bungeecord-chat</artifactId>
+      <version>1.21-R0.2-deprecated+build.21</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/net/md-5/bungeecord-chat/1.21-R0.2-deprecated+build.21/bungeecord-chat-1.21-R0.2-deprecated+build.21.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.joml</groupId>
+      <artifactId>joml</artifactId>
+      <version>1.10.8</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/org/joml/joml/1.10.8/joml-1.10.8.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
+      <version>1.0.0</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/org/jspecify/jspecify/1.0.0/jspecify-1.0.0.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>2.2</version>
+      <scope>system</scope>
+      <systemPath>${paper.libraries}/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar</systemPath>
+    </dependency>
+    <!-- jar лежит в server/plugins, на сервере это отдельный плагин -->
+    <dependency>
+      <groupId>com.github.retrooper</groupId>
+      <artifactId>packetevents-spigot</artifactId>
+      <version>2.14.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/../server/plugins/packetevents-spigot-2.14.0.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -69,8 +205,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>16</source>
-                    <target>16</target>
+                    <source>21</source>
+                    <target>21</target>
                 </configuration>
             </plugin>
             <plugin>

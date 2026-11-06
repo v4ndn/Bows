@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 import com.v4nden.bows.Boosts.BoostTypes;
+import com.v4nden.bows.Boosts.StarterBoostTypes;
 
 public class BoostCommandTab implements TabCompleter {
 
@@ -15,7 +16,10 @@ public class BoostCommandTab implements TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         List<String> tabcomplete = new ArrayList<>();
         for (BoostTypes type : BoostTypes.values()) {
-            tabcomplete.add(type.id.toUpperCase());
+            tabcomplete.add(type.name());
+        }
+        for (StarterBoostTypes type : StarterBoostTypes.values()) {
+            tabcomplete.add(type.name());
         }
         tabcomplete.add("ALL");
         return tabcomplete;

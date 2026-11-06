@@ -5,6 +5,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import com.v4nden.bows.Boosts.BoostTypes;
+import com.v4nden.bows.Boosts.StarterBoostTypes;
+import com.v4nden.bows.Boosts.StarterBoosts;
 
 public class BoostCommand implements CommandExecutor {
 
@@ -21,10 +23,20 @@ public class BoostCommand implements CommandExecutor {
                     player.getInventory().addItem(type.getBoost(player).createItem());
                 }
                 return false;
-            } else if (BoostTypes.valueOf(args[0]) != null) {
-                player.getInventory().addItem(BoostTypes.valueOf(args[0]).getBoost(player).createItem());
-                return false;
             }
+            for (StarterBoostTypes type : StarterBoostTypes.values()) {
+                if (type.name().equalsIgnoreCase(args[0])) {
+                    StarterBoosts.give(player, type);
+                    return true;
+                }
+            }
+            for (BoostTypes type : BoostTypes.values()) {
+                if (type.name().equalsIgnoreCase(args[0])) {
+                    player.getInventory().addItem(type.getBoost(player).createItem());
+                    return true;
+                }
+            }
+            return false;
 
         }
 
