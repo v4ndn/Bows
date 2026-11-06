@@ -407,15 +407,6 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/gold_ingot.png",
-      "ascent": 7,
-      "height": 8,
-      "chars": [
-        ""
-      ]
-    },
-    {
-      "type": "bitmap",
       "file": "minecraft:item/leather.png",
       "ascent": 7,
       "height": 8,
@@ -430,15 +421,6 @@
       "height": 8,
       "chars": [
         ""
-      ]
-    },
-    {
-      "type": "bitmap",
-      "file": "minecraft:item/iron_helmet.png",
-      "ascent": 7,
-      "height": 8,
-      "chars": [
-        ""
       ]
     },
     {
@@ -461,15 +443,6 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/iron_axe.png",
-      "ascent": 7,
-      "height": 8,
-      "chars": [
-        ""
-      ]
-    },
-    {
-      "type": "bitmap",
       "file": "minecraft:item/turtle_scute.png",
       "ascent": 7,
       "height": 8,
@@ -484,6 +457,24 @@
       "height": 8,
       "chars": [
         ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:item/chainmail_chestplate.png",
+      "ascent": 7,
+      "height": 8,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:item/iron_pickaxe.png",
+      "ascent": 7,
+      "height": 8,
+      "chars": [
+        ""
       ]
     }
   ]

@@ -76,15 +76,17 @@ providers = [{'type': 'space', 'advances': {' ': GAP_ADVANCE}}]
 small_providers = []
 table = []
 for icon, codepoint in sorted(codepoints.items(), key=lambda item: item[1]):
+    # удалённый буст: код остаётся занятым в таблице навсегда (иначе его получила бы
+    # новая иконка, и у игрока со старым паком показалась бы чужая картинка)
+    table.append(f'{icon}={codepoint:04X}')
     if icon not in icons:
-        continue  # буст удалён — код остаётся занятым, но символ больше не нужен
+        continue
     char = chr(codepoint)
     texture = icons[icon]
     providers.append({'type': 'bitmap', 'file': texture, 'ascent': ICON_ASCENT, 'height': ICON_HEIGHT,
                       'chars': [char]})
     small_providers.append({'type': 'bitmap', 'file': texture, 'ascent': SMALL_ICON_ASCENT,
                             'height': SMALL_ICON_HEIGHT, 'chars': [char]})
-    table.append(f'{icon}={codepoint:04X}')
 
 # ---- радар для таба: bows:radar, символ на каждое из 12 направлений ----
 # Сетка 4x4 точек: центр 2x2 — смотрящий, две точки края, ближайшие по углу —
@@ -135,4 +137,4 @@ with open(SMALL_FONT, 'w', encoding='utf-8') as f:
     f.write('\n')
 with open(TABLE, 'w', encoding='utf-8') as f:
     f.write('# сгенерировано resourcepack/gen_icon_font.py\n' + '\n'.join(table) + '\n')
-print(f'{len(table)} icons')
+print(f'{len(providers) - 1} icons, {len(table)} codepoints')
