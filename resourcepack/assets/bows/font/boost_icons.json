@@ -482,6 +482,15 @@
       "chars": [
         ""
       ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:item/mace.png",
+      "ascent": 12,
+      "height": 16,
+      "chars": [
+        ""
+      ]
     }
   ]
 }
