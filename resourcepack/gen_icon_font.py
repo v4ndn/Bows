@@ -29,7 +29,14 @@ GAP_ADVANCE = 10
 BLOCK_TEXTURES = {'glass': 'minecraft:block/glass.png', 'tnt': 'minecraft:block/tnt_side.png'}
 
 
+ICON_TEXTURES = os.path.join(ROOT, 'assets', 'bows', 'textures', 'item')
+
+
 def texture_of(source):
+    # у буста с 3D-моделью значок для GUI — рендер модели <id>_icon.png (см. скилл boost-model)
+    rendered = f'{boost_id(source)}_icon.png'
+    if os.path.exists(os.path.join(ICON_TEXTURES, rendered)):
+        return f'bows:item/{rendered}'
     icon = re.search(r'\.setIcon\("(?:([a-z0-9_]+):)?([a-z0-9_]+)"\)', source)
     if icon:
         return f'{icon.group(1) or "bows"}:item/{icon.group(2)}.png'

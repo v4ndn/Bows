@@ -368,7 +368,7 @@
     },
     {
       "type": "bitmap",
-      "file": "bows:item/timestop.png",
+      "file": "bows:item/timestop_icon.png",
       "ascent": 12,
       "height": 16,
       "chars": [
