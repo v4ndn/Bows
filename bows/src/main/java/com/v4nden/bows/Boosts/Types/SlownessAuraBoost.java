@@ -36,7 +36,7 @@ public class SlownessAuraBoost implements IBoostType {
                                 double x = Math.cos(a) * radius;
                                 double z = Math.sin(a) * radius;
 
-                                Game.targets().forEach((gamePlayer) -> {
+                                Game.targetsFor(consumer).forEach((gamePlayer) -> {
                                     if (gamePlayer != consumer) {
                                         if (gamePlayer.getLocation().distance(consumer.getLocation()) < 20) {
                                             gamePlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 1));

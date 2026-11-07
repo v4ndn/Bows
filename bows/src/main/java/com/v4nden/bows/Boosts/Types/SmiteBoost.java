@@ -28,7 +28,7 @@ public class SmiteBoost implements IBoostType {
                                 1);
                     }
                     // targets() — копия: молния может убить игрока и он удалится из gamePlayers
-                    Game.targets().forEach(gamePlayer -> {
+                    Game.targetsFor(consumer).forEach(gamePlayer -> {
                         if (!gamePlayer.equals(consumer)) {
                             gamePlayer.getWorld().strikeLightning(gamePlayer.getLocation()).setCausingPlayer(consumer);
                         }

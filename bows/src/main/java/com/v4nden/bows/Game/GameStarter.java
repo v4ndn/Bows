@@ -30,6 +30,8 @@ public class GameStarter {
     private static final int MAP_RADIUS = 700;
     // точки появления — в стольких блоках от центра (как в Game.startGame)
     private static final int SPAWN_SPREAD = 100;
+    // сокомандники появляются в стольких блоках от точки команды
+    private static final int TEAMMATE_SPREAD = 3;
     // прегенерируются только чанки SPAWN_CHUNKS x SPAWN_CHUNKS вокруг точки каждого участника
     private static final int SPAWN_CHUNKS = 5;
     private static final int SAMPLES_PER_AXIS = 21;
@@ -41,6 +43,10 @@ public class GameStarter {
     private static boolean preparing = false;
     // тестовая игра: готовится для одного игрока, сообщения — только ему
     private static Player testPlayer = null;
+    // размер команды; 0 — каждый сам за себя
+    private static int teamSize = 0;
+    // ники, которые гарантированно будут одной командой
+    private static List<String> fixedTeam = List.of();
     // номер подготовки: отменённая не должна стартовать игру из своих колбэков
     private static int preparation = 0;
 
@@ -54,6 +60,10 @@ public class GameStarter {
 
     /** testFor — игрок тестовой игры, null — обычная игра для всех онлайн. */
     public static void start(Player testFor) {
+        start(testFor, 0, List.of());
+    }
+
+    public static void start(Player testFor, int size, List<String> fixedNames) {
         if (preparing || Game.isRunning) {
             BowsUtils.broadcastSystemMessage(testFor != null ? List.of(testFor) : Bukkit.getOnlinePlayers(),
                     "Игра уже готовится или идёт");
@@ -61,6 +71,8 @@ public class GameStarter {
         }
         preparing = true;
         testPlayer = testFor;
+        teamSize = size;
+        fixedTeam = fixedNames;
         preparation++;
         attempt(Bukkit.getWorld("world"), 1, preparation);
     }
@@ -125,14 +137,26 @@ public class GameStarter {
         Map<UUID, Location> spawns = new HashMap<>();
         Set<Long> chunkKeys = new LinkedHashSet<>();
         int half = SPAWN_CHUNKS / 2;
-        for (Player participant : participants) {
-            int x = centerX + random.nextInt(-SPAWN_SPREAD, SPAWN_SPREAD);
-            int z = centerZ + random.nextInt(-SPAWN_SPREAD, SPAWN_SPREAD);
-            spawns.put(participant.getUniqueId(), new Location(world, x, world.getMaxHeight(), z));
-            for (int dx = -half; dx <= half; dx++) {
-                for (int dz = -half; dz <= half; dz++) {
-                    // совпадающие чанки у соседних точек генерируются один раз
-                    chunkKeys.add(((long) ((x >> 4) + dx) << 32) | (((z >> 4) + dz) & 0xFFFFFFFFL));
+        // команды: у каждой своя точка, участники — в паре блоков от неё
+        List<List<Player>> groups;
+        if (teamSize > 0) {
+            groups = Teams.assign(participants, teamSize, fixedTeam);
+        } else {
+            Teams.reset();
+            groups = participants.stream().map(List::of).toList();
+        }
+        for (List<Player> group : groups) {
+            int baseX = centerX + random.nextInt(-SPAWN_SPREAD, SPAWN_SPREAD);
+            int baseZ = centerZ + random.nextInt(-SPAWN_SPREAD, SPAWN_SPREAD);
+            for (Player participant : group) {
+                int x = baseX + (group.size() > 1 ? random.nextInt(-TEAMMATE_SPREAD, TEAMMATE_SPREAD + 1) : 0);
+                int z = baseZ + (group.size() > 1 ? random.nextInt(-TEAMMATE_SPREAD, TEAMMATE_SPREAD + 1) : 0);
+                spawns.put(participant.getUniqueId(), new Location(world, x, world.getMaxHeight(), z));
+                for (int dx = -half; dx <= half; dx++) {
+                    for (int dz = -half; dz <= half; dz++) {
+                        // совпадающие чанки у соседних точек генерируются один раз
+                        chunkKeys.add(((long) ((x >> 4) + dx) << 32) | (((z >> 4) + dz) & 0xFFFFFFFFL));
+                    }
                 }
             }
         }
@@ -149,16 +173,30 @@ public class GameStarter {
             if (testPlayer != null) {
                 if (!online.isEmpty()) {
                     announce("Карта готова, тестовая игра запущена, остановить: /stopgame");
+                    announceTeams(groups);
                     Game.startGame(center, online, true, spawns);
                 }
             } else if (online.isEmpty()) {
                 announce("Все участники вышли, игра не начата");
             } else {
                 announce("Карта готова, старт!");
+                announceTeams(groups);
                 Game.startGame(center, online, false, spawns);
             }
             testPlayer = null;
         }).next();
+    }
+
+    private static void announceTeams(List<List<Player>> groups) {
+        if (!Teams.isActive()) {
+            return;
+        }
+        List<String> lines = new ArrayList<>();
+        for (int i = 0; i < groups.size(); i++) {
+            lines.add(Teams.colorOf(i) + "Команда " + (i + 1) + org.bukkit.ChatColor.RESET + ": "
+                    + String.join(", ", groups.get(i).stream().map(Player::getName).toList()));
+        }
+        announce(String.join("\n", lines));
     }
 
     private static void announce(String message) {

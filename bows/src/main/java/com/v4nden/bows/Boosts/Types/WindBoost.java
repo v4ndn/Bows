@@ -26,7 +26,7 @@ public class WindBoost implements IBoostType {
                 .setDescription(ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
                         + "\n Запускает владельца\n относительно поворота головы\n вперёд ~30 блоков")
                 .setRunnable(consumer -> {
-                    Game.targets().forEach(gamePlayer -> {
+                    Game.targetsFor(consumer).forEach(gamePlayer -> {
                         if (gamePlayer.equals(consumer))
                             return;
                         if (gamePlayer.getLocation().distance(consumer.getLocation()) > 15)

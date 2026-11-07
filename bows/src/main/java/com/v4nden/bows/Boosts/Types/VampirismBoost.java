@@ -19,6 +19,7 @@ import com.v4nden.bows.Bows;
 import com.v4nden.bows.Boosts.Boost;
 import com.v4nden.bows.Boosts.BoostGenerator;
 import com.v4nden.bows.Game.Stats;
+import com.v4nden.bows.Game.Teams;
 import com.v4nden.bows.Utils.TemporaryListener;
 
 import net.md_5.bungee.api.ChatColor;
@@ -56,7 +57,7 @@ public class VampirismBoost implements IBoostType {
                                         && !(e.getDamager() instanceof LightningStrike)) {
                                     return;
                                 }
-                                if (!consumer.equals(Stats.findAttacker(e))) {
+                                if (!consumer.equals(Stats.findAttacker(e)) || Teams.areTeammates(consumer, victim)) {
                                     return;
                                 }
                                 double dealt = Math.min(e.getFinalDamage(), victim.getHealth());

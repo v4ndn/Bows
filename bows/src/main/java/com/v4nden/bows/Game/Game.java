@@ -2,12 +2,15 @@ package com.v4nden.bows.Game;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -67,9 +70,16 @@ public class Game implements Listener {
         return targets;
     }
 
-    // цели кроме владельца буста
-    public static List<LivingEntity> targetsExcept(Player owner) {
+    // цели буста владельца: все, кроме его сокомандников (сам владелец остаётся)
+    public static List<LivingEntity> targetsFor(Player owner) {
         List<LivingEntity> targets = targets();
+        targets.removeIf(target -> Teams.areTeammates(owner, target));
+        return targets;
+    }
+
+    // цели кроме владельца буста и его сокомандников
+    public static List<LivingEntity> targetsExcept(Player owner) {
+        List<LivingEntity> targets = targetsFor(owner);
         targets.remove(owner);
         return targets;
     }
@@ -224,6 +234,7 @@ public class Game implements Listener {
         gamePlayers.clear();
         Dummies.clear();
         GiantBoost.reset();
+        Teams.reset();
         Bukkit.getWorld("world").getWorldBorder().setCenter(0, 0);
         Bukkit.getWorld("world").getWorldBorder().setSize(500);
     }
@@ -310,7 +321,52 @@ public class Game implements Listener {
         }
 
         eliminatePlayer(e.getPlayer());
+        checkWin();
+    }
 
+    // победа: последний живой игрок, а в командном режиме — последняя живая команда
+    // (победа засчитывается всем её участникам, включая выбывших)
+    private static void checkWin() {
+        if (!isRunning || isTest) {
+            return;
+        }
+        if (gamePlayers.isEmpty()) {
+            stopGame();
+            return;
+        }
+        if (Teams.isActive()) {
+            Set<Integer> alive = new HashSet<>();
+            gamePlayers.forEach(player -> alive.add(Teams.teamOf(player)));
+            if (alive.size() > 1) {
+                return;
+            }
+            int team = alive.iterator().next();
+            List<String> names = new ArrayList<>();
+            for (UUID member : Teams.membersOf(team)) {
+                Player player = Bukkit.getPlayer(member);
+                if (player != null) {
+                    Stats.increment(player, Stats.WINS);
+                    names.add(player.getName());
+                }
+            }
+            BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(),
+                    Teams.colorOf(team) + "Команда " + (team + 1) + ChatColor.RESET + " победила: " + String.join(", ", names));
+            stopGame();
+            return;
+        }
+        if (gamePlayers.size() == 1) {
+            BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(), gamePlayers.get(0).getName() + " победил!");
+            Stats.increment(gamePlayers.get(0), Stats.WINS);
+            stopGame();
+        }
+    }
+
+    // сокомандники не ранят друг друга (LOWEST — раньше проверки смертельного урона)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void preventFriendlyFire(EntityDamageEvent e) {
+        if (e.getEntity() instanceof Player victim && Teams.areTeammates(victim, Stats.findAttacker(e))) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -360,17 +416,7 @@ public class Game implements Listener {
                 }
                 Stats.forget(p);
                 eliminatePlayer(p);
-                if (isRunning && gamePlayers.size() == 1) {
-
-                    BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(),
-                            gamePlayers.get(0).getName() + " победил!");
-                    if (!isTest) {
-                        Stats.increment(gamePlayers.get(0), Stats.WINS);
-                    }
-
-                    stopGame();
-
-                }
+                checkWin();
             }
         }
     }

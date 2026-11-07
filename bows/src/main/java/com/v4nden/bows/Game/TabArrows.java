@@ -176,7 +176,9 @@ public class TabArrows {
     }
 
     private static String leftPart(Player target) {
-        String name = target.getName();
+        // в командном режиме ник в цвете команды
+        org.bukkit.ChatColor teamColor = Teams.colorOf(target);
+        String name = (teamColor != null ? teamColor.toString() : "") + target.getName() + ChatColor.RESET;
         if (Game.isRunning && Game.gamePlayers.contains(target)) {
             name += ChatColor.of("#a6a6a6") + " [" + (int) target.getHealth() + "] ["
                     + target.getLocation().getBlockY() + "]";
@@ -267,7 +269,10 @@ public class TabArrows {
             if (target.getPlayerListOrder() != 0) {
                 target.setPlayerListOrder(0);
             }
-            String teamName = TEAM_PREFIX + target.getName().toLowerCase();
+            // команда скорборда по команде игры и нику: таб группирует команды подряд
+            int gameTeam = Teams.teamOf(target);
+            String teamName = TEAM_PREFIX + (gameTeam >= 0 ? String.format("%02d_", gameTeam) : "zz_")
+                    + target.getName().toLowerCase();
             activeTeams.add(teamName);
 
             Team team = board.getTeam(teamName);
@@ -276,6 +281,11 @@ public class TabArrows {
             }
             if (!team.hasEntry(target.getName())) {
                 team.addEntry(target.getName());
+            }
+            // цвет ника над головой — цвет команды
+            org.bukkit.ChatColor color = gameTeam >= 0 ? Teams.colorOf(gameTeam) : org.bukkit.ChatColor.WHITE;
+            if (team.getColor() != color) {
+                team.setColor(color);
             }
             String suffix = Game.isRunning && Game.gamePlayers.contains(target)
                     ? ChatColor.of("#e97218") + " [" + (int) target.getHealth() + "]"

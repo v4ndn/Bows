@@ -23,7 +23,7 @@ public class GlobalLevitationBoost implements IBoostType {
                 .setDescription(ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
                         + "\n Накладывает на всех живых\n игроков на карте, включая\n владельца, эффект левитации\n второго уровня на 5 секунд")
                 .setRunnable(consumer -> {
-                    Game.targets().forEach(gamePlayer -> {
+                    Game.targetsFor(consumer).forEach(gamePlayer -> {
                         gamePlayer.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20 * 5, 1));
                         gamePlayer.getWorld().spawnParticle(Particle.END_ROD, gamePlayer.getLocation(), 30,
                                 .5, .2, .5, .05);

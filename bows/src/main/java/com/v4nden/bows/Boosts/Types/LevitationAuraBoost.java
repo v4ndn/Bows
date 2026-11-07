@@ -40,7 +40,7 @@ public class LevitationAuraBoost implements IBoostType {
                     int task = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bows.instance, () -> {
                         Location center = consumer.getLocation();
 
-                        Game.targets().forEach((gamePlayer) -> {
+                        Game.targetsFor(consumer).forEach((gamePlayer) -> {
                             if (gamePlayer != consumer && gamePlayer.getWorld().equals(center.getWorld())
                                     && gamePlayer.getLocation().distance(center) < RADIUS) {
                                 gamePlayer.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 0));

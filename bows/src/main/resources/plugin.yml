@@ -9,7 +9,7 @@ commands:
     permission: "bows.root"
   startgame:
     description: "Start game"
-    usage: "/startgame [test]"
+    usage: "/startgame [test] [размер команды] [ники одной команды...]"
     permission: "bows.root"
   stopgame:
     description: "Stop game"

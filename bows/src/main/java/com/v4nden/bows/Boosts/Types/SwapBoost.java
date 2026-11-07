@@ -13,6 +13,7 @@ import com.v4nden.bows.Boosts.Boost;
 import com.v4nden.bows.Boosts.BoostGenerator;
 import com.v4nden.bows.Boosts.StarterBoosts;
 import com.v4nden.bows.Game.Game;
+import com.v4nden.bows.Game.Teams;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -30,6 +31,7 @@ public class SwapBoost implements IBoostType {
                     others.remove(consumer);
                     // владельцы «Неуловимого» в случайный выбор не попадают
                     others.removeIf(ElusiveBoost::has);
+                    others.removeIf(other -> Teams.areTeammates(consumer, other));
                     if (others.isEmpty()) {
                         return;
                     }

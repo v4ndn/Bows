@@ -25,7 +25,7 @@ public class GlowAllBoost implements IBoostType {
                     Game.gamePlayers.forEach((gamePlayer) -> {
                         gamePlayer.playSound(consumer.getLocation(), Sound.ENTITY_WITHER_SPAWN, 10, 0);
                     });
-                    Game.targets().forEach((gamePlayer) -> {
+                    Game.targetsFor(consumer).forEach((gamePlayer) -> {
                         gamePlayer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 20 * 15, 1));
                         gamePlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 1));
                     });

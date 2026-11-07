@@ -14,6 +14,7 @@ import com.v4nden.bows.Bows;
 import com.v4nden.bows.Boosts.Boost;
 import com.v4nden.bows.Boosts.BoostGenerator;
 import com.v4nden.bows.Game.Game;
+import com.v4nden.bows.Game.Teams;
 import com.v4nden.bows.Utils.TemporaryListener;
 
 import net.md_5.bungee.api.ChatColor;
@@ -45,7 +46,7 @@ public class TimestopBoost implements IBoostType {
                     Game.gamePlayers.forEach((gamePlayer) -> {
                         gamePlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 1));
                         gamePlayer.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 20 * 10, 1));
-                        if (!gamePlayer.equals(consumer)) {
+                        if (!gamePlayer.equals(consumer) && !Teams.areTeammates(consumer, gamePlayer)) {
                             gamePlayer.setAllowFlight(true);
                         }
                     });
@@ -81,7 +82,7 @@ public class TimestopBoost implements IBoostType {
                     Bukkit.getServer().getScheduler().runTaskLater(Bows.instance, () -> {
                         Game.gamePlayers.forEach((gamePlayer) -> {
                             gamePlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 1));
-                            if (!gamePlayer.equals(consumer)) {
+                            if (!gamePlayer.equals(consumer) && !Teams.areTeammates(consumer, gamePlayer)) {
                                 gamePlayer.setAllowFlight(false);
                             }
                         });
@@ -97,7 +98,8 @@ public class TimestopBoost implements IBoostType {
                     new TemporaryListener<>(PlayerMoveEvent.class, EventPriority.NORMAL, e -> {
                         PlayerMoveEvent event = (PlayerMoveEvent) e;
                         if (System.currentTimeMillis() - now < 10000) {
-                            if (event.getPlayer().equals(consumer) || !Game.gamePlayers.contains(event.getPlayer())) {
+                            if (event.getPlayer().equals(consumer) || !Game.gamePlayers.contains(event.getPlayer())
+                                    || Teams.areTeammates(consumer, event.getPlayer())) {
                                 event.setCancelled(false);
                             } else {
                                 event.setCancelled(true);

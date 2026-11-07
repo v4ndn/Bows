@@ -86,7 +86,7 @@ public class BreakBoost implements IBoostType {
                 consumer.getLocation(),
                 50, 3,
                 0, 3, .01);
-        Game.targets().forEach((gamePlayer) -> {
+        Game.targetsFor(consumer).forEach((gamePlayer) -> {
             if (!gamePlayer.equals(consumer)) {
                 if (gamePlayer.getWorld().equals(consumer.getWorld())
                         && gamePlayer.getLocation().distance(consumer.getLocation()) < 7) {

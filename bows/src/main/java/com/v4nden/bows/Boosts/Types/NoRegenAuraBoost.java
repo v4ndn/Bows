@@ -49,7 +49,7 @@ public class NoRegenAuraBoost implements IBoostType {
                                         && e.getRegainReason() != RegainReason.REGEN) {
                                     return;
                                 }
-                                if (e.getEntity().equals(consumer) || !Game.targets().contains(e.getEntity())) {
+                                if (e.getEntity().equals(consumer) || !Game.targetsFor(consumer).contains(e.getEntity())) {
                                     return;
                                 }
                                 Location center = consumer.getLocation();
