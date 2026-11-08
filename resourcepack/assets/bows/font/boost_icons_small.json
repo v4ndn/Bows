@@ -236,7 +236,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/netherite_ingot.png",
+      "file": "bows:item/rage_icon.png",
       "ascent": 7,
       "height": 8,
       "chars": [

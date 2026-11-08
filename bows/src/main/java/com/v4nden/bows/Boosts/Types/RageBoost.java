@@ -55,6 +55,7 @@ public class RageBoost implements IBoostType {
                 .setMaterial(Material.NETHERITE_INGOT)
                 .setRarity(4)
                 .setId("rage")
+                .setIcon("rage")
                 .setPreviewRadius(SHOVE_RADIUS)
                 .setName("Рейдж")
                 .setDescription(ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
