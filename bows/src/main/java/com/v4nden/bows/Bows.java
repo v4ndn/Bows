@@ -16,6 +16,8 @@ import com.v4nden.bows.Boosts.Types.DoubleJumpBoost;
 import com.v4nden.bows.Boosts.Types.GathererBoost;
 import com.v4nden.bows.Game.Dummies;
 import com.v4nden.bows.Game.Game;
+import com.v4nden.bows.Game.GameWorlds;
+import com.v4nden.bows.Game.StarterChoiceDialog;
 import com.v4nden.bows.Game.GameStarter;
 import com.v4nden.bows.Game.PeacefulExplosions;
 import com.v4nden.bows.Game.RadiusHighlight;
@@ -24,6 +26,7 @@ import com.v4nden.bows.Game.TabArrows;
 import com.v4nden.bows.Game.GameCommand.DummyCommand;
 import com.v4nden.bows.Game.GameCommand.HudTextCommand;
 import com.v4nden.bows.Game.GameCommand.InfoCommand;
+import com.v4nden.bows.Game.GameCommand.WorldSettingsCommand;
 import com.v4nden.bows.Game.GameCommand.StartGame;
 import com.v4nden.bows.Game.GameCommand.StopGame;
 
@@ -41,6 +44,7 @@ public class Bows extends JavaPlugin {
         this.getCommand("dummy").setExecutor(dummyCommand);
         this.getCommand("dummy").setTabCompleter(dummyCommand);
         this.getCommand("info").setExecutor(new InfoCommand());
+        this.getCommand("worldsettings").setExecutor(new WorldSettingsCommand());
         HudTextCommand hudTextCommand = new HudTextCommand();
         this.getCommand("hudtext").setExecutor(hudTextCommand);
         this.getCommand("hudtext").setTabCompleter(hudTextCommand);
@@ -48,10 +52,13 @@ public class Bows extends JavaPlugin {
         this.getCommand("boost").setTabCompleter(new BoostCommandTab());
 
         Bukkit.getServer().getPluginManager().registerEvents(new Game(), this);
+        // миры игр, оставшиеся после падения или перезагрузки
+        GameWorlds.cleanupLeftovers();
         Bukkit.getServer().getPluginManager().registerEvents(new Dummies(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new PeacefulExplosions(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new DoubleJumpBoost.Handler(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new GathererBoost.Handler(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new StarterChoiceDialog.Handler(), this);
         TabArrows.start();
         RadiusHighlight.start();
         Bukkit.getServer().getPluginManager().registerEvents(new ResourcePackSync(), this);

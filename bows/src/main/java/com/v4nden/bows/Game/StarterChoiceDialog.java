@@ -8,18 +8,23 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.v4nden.bows.Bows;
 import com.v4nden.bows.Boosts.Boost;
 import com.v4nden.bows.Boosts.BoostIcons;
 import com.v4nden.bows.Boosts.StarterBoostTypes;
 import com.v4nden.bows.Boosts.StarterBoosts;
 
 import io.papermc.paper.dialog.Dialog;
+import io.papermc.paper.event.player.PlayerClientLoadedWorldEvent;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import io.papermc.paper.registry.data.dialog.DialogBase;
 import io.papermc.paper.registry.data.dialog.body.DialogBody;
@@ -33,6 +38,10 @@ import net.kyori.adventure.text.event.ClickEvent;
  * Выбор стартового буста в начале игры: сетка иконок стартовых бустов (как в /info),
  * последняя иконка — случайный буст. Клик по иконке выдаёт буст и закрывает окно,
  * Esc — играть без стартового буста. Один выбор на игру.
+ *
+ * Окно открывается, когда клиент загрузил мир игры: переход в другой мир
+ * (у каждой игры свой) закрывает на клиенте все экраны, и окно, открытое
+ * до телепорта, пропадало.
  */
 public class StarterChoiceDialog {
     private static final int GRID_WIDTH = 200;
@@ -46,10 +55,37 @@ public class StarterChoiceDialog {
     private static final Set<UUID> chosen = new HashSet<>();
     // клики по окну прошлой игры не должны срабатывать
     private static long gameId = 0;
+    // кому показать окно, как только клиент загрузит мир игры
+    private static final Set<UUID> pending = new HashSet<>();
+    // если события загрузки не будет — показать через столько тиков
+    private static final long FALLBACK_TICKS = 20 * 10;
 
     public static void reset() {
         chosen.clear();
+        pending.clear();
         gameId++;
+    }
+
+    /** Показать окно после загрузки мира (вызывать до телепорта в мир игры). */
+    public static void showWhenLoaded(Player player) {
+        pending.add(player.getUniqueId());
+        long game = gameId;
+        Bukkit.getScheduler().runTaskLater(Bows.instance, () -> showPending(player, game), FALLBACK_TICKS);
+    }
+
+    private static void showPending(Player player, long game) {
+        if (game != gameId || !pending.remove(player.getUniqueId()) || !player.isOnline() || !Game.isRunning
+                || !Game.gamePlayers.contains(player)) {
+            return;
+        }
+        show(player);
+    }
+
+    public static class Handler implements Listener {
+        @EventHandler
+        public void onLoaded(PlayerClientLoadedWorldEvent event) {
+            showPending(event.getPlayer(), gameId);
+        }
     }
 
     public static void show(Player player) {

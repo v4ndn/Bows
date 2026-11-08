@@ -216,6 +216,8 @@ public class Boost implements Listener {
 
         meta.setLore(lore);
         meta.setMaxStackSize(1);
+        // без переливания зачарования, даже у предметов со встроенным свечением (звезда незера и т.п.)
+        meta.setEnchantmentGlintOverride(false);
         if (icon != null) {
             // "timestop" — модель из нашего пака, "minecraft:iron_helmet" — любая другая
             meta.setItemModel(icon.contains(":") ? NamespacedKey.fromString(icon) : new NamespacedKey("bows", icon));

@@ -43,6 +43,8 @@ public class GameStarter {
     private static boolean preparing = false;
     // тестовая игра: готовится для одного игрока, сообщения — только ему
     private static Player testPlayer = null;
+    // мир готовящейся игры; если подготовку отменили — удаляется
+    private static World gameWorld = null;
     // размер команды; 0 — каждый сам за себя
     private static int teamSize = 0;
     // ники, которые гарантированно будут одной командой
@@ -74,7 +76,17 @@ public class GameStarter {
         teamSize = size;
         fixedTeam = fixedNames;
         preparation++;
-        attempt(Bukkit.getWorld("world"), 1, preparation);
+        // отдельный мир на эту игру (удаляется после неё)
+        try {
+            gameWorld = GameWorlds.create();
+        } catch (RuntimeException e) {
+            preparing = false;
+            testPlayer = null;
+            announce("Не удалось создать мир для игры: " + e.getMessage());
+            Bows.instance.getLogger().warning("Не удалось создать мир для игры: " + e);
+            return;
+        }
+        attempt(gameWorld, 1, preparation);
     }
 
     public static void cancel() {
@@ -82,6 +94,8 @@ public class GameStarter {
             preparing = false;
             preparation++;
             announce("Подготовка игры отменена");
+            GameWorlds.delete(gameWorld);
+            gameWorld = null;
             testPlayer = null;
         }
     }
@@ -93,6 +107,8 @@ public class GameStarter {
         if (attempt > MAX_ATTEMPTS) {
             preparing = false;
             announce("Не нашлось подходящего места за " + MAX_ATTEMPTS + " попыток, попробуй ещё раз");
+            GameWorlds.delete(gameWorld);
+            gameWorld = null;
             testPlayer = null;
             return;
         }
@@ -175,15 +191,20 @@ public class GameStarter {
                     announce("Карта готова, тестовая игра запущена, остановить: /stopgame");
                     announceTeams(groups);
                     Game.startGame(center, online, true, spawns);
+                } else {
+                    GameWorlds.delete(world);
                 }
             } else if (online.isEmpty()) {
                 announce("Все участники вышли, игра не начата");
+                GameWorlds.delete(world);
             } else {
                 announce("Карта готова, старт!");
                 announceTeams(groups);
                 Game.startGame(center, online, false, spawns);
             }
             testPlayer = null;
+            // дальше мир принадлежит игре: удалится в Game.stopGame
+            gameWorld = null;
         }).next();
     }
 

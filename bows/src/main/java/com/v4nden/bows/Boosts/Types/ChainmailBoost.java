@@ -47,6 +47,8 @@ public class ChainmailBoost implements IBoostType {
         ItemMeta meta = item.getItemMeta();
         meta.addEnchant(Enchantment.BINDING_CURSE, 1, true);
         meta.setUnbreakable(true);
+        // проклятие несъёмности без переливания
+        meta.setEnchantmentGlintOverride(false);
         item.setItemMeta(meta);
         return item;
     }

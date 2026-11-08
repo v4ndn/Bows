@@ -15,6 +15,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -125,8 +126,8 @@ public class Game implements Listener {
             player.getInventory().clear();
             player.getInventory().setItem(0, new ItemStack(Material.BOW));
             player.getInventory().setItem(1, new ItemStack(Material.ARROW, 20));
-            // стартовый буст игрок выбирает сам в окне (или играет без него)
-            StarterChoiceDialog.show(player);
+            // стартовый буст игрок выбирает сам в окне (или играет без него); окно — после загрузки мира игры
+            StarterChoiceDialog.showWhenLoaded(player);
             // своя точка, если назначена; clone: add() менял бы саму точку центра
             Location spawn = spawns.getOrDefault(player.getUniqueId(),
                     location.clone().add(random.nextInt(-100, 100), 0, random.nextInt(-100, 100)));
@@ -144,10 +145,10 @@ public class Game implements Listener {
         }
         taskTabInfos = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, () -> {
 
-            String center = Bukkit.getWorld("world").getWorldBorder().getCenter().getBlockX() + ", "
-                    + Bukkit.getWorld("world").getWorldBorder().getCenter().getBlockZ();
+            String center = gameLocation.getWorld().getWorldBorder().getCenter().getBlockX() + ", "
+                    + gameLocation.getWorld().getWorldBorder().getCenter().getBlockZ();
             String message = "\n     Центр: " + center + "     \nРадиус: "
-                    + (int) (Bukkit.getWorld("world").getWorldBorder().getSize() / 2) + "\n";
+                    + (int) (gameLocation.getWorld().getWorldBorder().getSize() / 2) + "\n";
 
             for (Player p : Bukkit.getOnlinePlayers()) {
                 p.setPlayerListFooter(message);
@@ -208,9 +209,10 @@ public class Game implements Listener {
             });
         }, 0L, 60L);
 
-        Bukkit.getWorld("world").getWorldBorder().setSize(1400);
-        Bukkit.getWorld("world").getWorldBorder().setCenter(location);
-        Bukkit.getWorld("world").getWorldBorder().setSize(5, 7 * 60);
+        // граница — в мире игры (у каждой игры свой мир, см. GameWorlds)
+        location.getWorld().getWorldBorder().setSize(1400);
+        location.getWorld().getWorldBorder().setCenter(location);
+        location.getWorld().getWorldBorder().setSize(5, 7 * 60);
     }
 
     public static void stopGame() {
@@ -225,7 +227,7 @@ public class Game implements Listener {
         Bukkit.getServer().getScheduler().cancelTask(taskBoosts);
         for (Player p : playersToReset) {
             p.setGameMode(GameMode.ADVENTURE);
-            p.teleport(new Location(Bukkit.getWorld("world"), 0, 100, 0));
+            p.teleport(GameWorlds.lobbySpawn());
             gamePlayers.remove(p);
             p.getInventory().clear();
             p.setPlayerListFooter("");
@@ -235,8 +237,18 @@ public class Game implements Listener {
         Dummies.clear();
         GiantBoost.reset();
         Teams.reset();
-        Bukkit.getWorld("world").getWorldBorder().setCenter(0, 0);
-        Bukkit.getWorld("world").getWorldBorder().setSize(500);
+        GameWorlds.lobby().getWorldBorder().setCenter(0, 0);
+        GameWorlds.lobby().getWorldBorder().setSize(500);
+        // мир игры больше не нужен: выгрузить и удалить. Следующим тиком: stopGame часто
+        // вызывается из события внутри этого мира, а выгружать мир посреди его тика нельзя
+        if (gameLocation != null) {
+            World world = gameLocation.getWorld();
+            if (Bows.instance.isEnabled()) {
+                Bukkit.getScheduler().runTask(Bows.instance, () -> GameWorlds.delete(world));
+            } else {
+                GameWorlds.delete(world);
+            }
+        }
     }
 
     // всё, что игра и бусты меняют на игроке, — обратно к ванильному
@@ -270,11 +282,11 @@ public class Game implements Listener {
         if (isRunning && !isTest) {
             e.getPlayer().setGameMode(GameMode.SPECTATOR);
             e.getPlayer()
-                    .teleport(Bukkit.getWorld("world")
-                            .getHighestBlockAt(Bukkit.getWorld("world").getWorldBorder().getCenter()).getLocation()
+                    .teleport(gameLocation.getWorld()
+                            .getHighestBlockAt(gameLocation.getWorld().getWorldBorder().getCenter()).getLocation()
                             .add(0, 2, 0));
         } else {
-            e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0, 100, 0));
+            e.getPlayer().teleport(GameWorlds.lobbySpawn());
             e.getPlayer().setGameMode(GameMode.ADVENTURE);
         }
     }

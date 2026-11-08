@@ -25,3 +25,7 @@ commands:
   info:
     description: "Boost descriptions menu"
     usage: "/info"
+  worldsettings:
+    description: "World settings for new games"
+    usage: "/worldsettings"
+    permission: "bows.root"
