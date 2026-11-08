@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "anymodel": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Anymodel",
+      "options": { "baseURL": "https://anymodel.ghostly.su/v1" },
+      "models": {
+        "opus-5.5": { "name": "opus-5.5" },
+        "opus-5": { "name": "opus-5" },
+        "gpt-6.1-sol": { "name": "gpt-6.1-sol" }
+      }
+    }
+  }
+}
