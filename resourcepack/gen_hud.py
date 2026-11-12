@@ -51,25 +51,41 @@ BORDER = (0, 0, 0, 200)
 BOOST_COLOR = (233, 114, 24, 255)
 TIMER_COLOR = (244, 235, 229, 255)
 DIRECTION_COLOR = (90, 200, 255, 255)
-BAR_LIGHT = (240, 128, 104, 255)
-BAR_COLOR = (224, 91, 75, 255)
-BAR_DARK = (170, 58, 50, 255)
-BACKGROUND_STRIPE = (0, 0, 0, 165)
-STRIPE_LIGHTEN = 0.3
+BAR_LIGHT = (240, 150, 82, 255)
+BAR_COLOR = (226, 128, 56, 255)
+BAR_DARK = (196, 104, 44, 255)
+BACKGROUND_STRIPE = (0, 0, 0, 145)
+STRIPE_LIGHTEN = 0.12
+DONUT_EMPTY = (40, 40, 40, 170)
+DONUT_OUTER = 3.5
+DONUT_INNER = 1.5
+
+
+def shade(color, amount):
+    """amount > 0 — светлее, < 0 — темнее."""
+    if amount >= 0:
+        return lighten(color, amount)
+    return tuple(round(c * (1 + amount)) for c in color[:3]) + (color[3],)
 
 
 def ring(fraction, color):
-    """Круг 7×7: тёмный диск, заполненный сектором по часовой от верха."""
+    """Пончик 7×7: кольцо с дыркой в центре, заполняется сектором по часовой от верха.
+    Свет сверху слева: на верхне-левой стороне кольца светлее, на нижне-правой темнее,
+    плюс объём трубки — середина кольца светлее краёв."""
     image = Image.new('RGBA', (RING, RING))
     center = (RING - 1) / 2
     for y in range(RING):
         for x in range(RING):
             dx, dy = x - center, y - center
-            if dx * dx + dy * dy > (RING / 2) ** 2:
+            distance = math.hypot(dx, dy)
+            if distance > DONUT_OUTER or distance < DONUT_INNER:
                 continue
             angle = (math.degrees(math.atan2(dx, -dy)) + 360) % 360
             filled = fraction >= 1 or (fraction > 0 and angle <= fraction * 360)
-            image.putpixel((x, y), color if filled else BACKGROUND)
+            light = (-dx - dy) / (distance * math.sqrt(2))
+            tube = 1 - abs(distance - (DONUT_OUTER + DONUT_INNER) / 2) / ((DONUT_OUTER - DONUT_INNER) / 2)
+            amount = light * 0.22 + (tube - 0.5) * 0.2
+            image.putpixel((x, y), shade(color if filled else DONUT_EMPTY, amount))
     return image
 
 
@@ -86,8 +102,12 @@ def frame():
     image = Image.new('RGBA', (BAR_WIDTH, HEIGHT))
     for y in range(1, HEIGHT - 1):
         for x in range(BAR_WIDTH):
-            border = x == 0 or x == BAR_WIDTH - 1 or y == 1 or y == HEIGHT - 2
-            if border:
+            left, right = x == 0, x == BAR_WIDTH - 1
+            top, bottom = y == 1, y == HEIGHT - 2
+            # скруглённые углы: угловых пикселей рамки нет
+            if (left or right) and (top or bottom):
+                continue
+            if left or right or top or bottom:
                 image.putpixel((x, y), BORDER)
             else:
                 image.putpixel((x, y), BACKGROUND_STRIPE if stripe(x - 1, y) else BACKGROUND)
