@@ -41,14 +41,15 @@ const float HUD_SLIDE = 10.0;
 // ---- Bows: панель участников в левом верхнем углу (GamePanel.java) ----
 //
 // Это сайдбар скорборда. Цвет текста строк — метка (254, вид, число строк):
-// вид 3 — белый, 5 — радар, 16..31 — цвет команды (код цвета 0..15).
+// вид 3 — белый, 5 — радар, 6 — серый (хп и высота), 16..31 — цвет команды (код цвета 0..15).
 // Все строки одной ширины PANEL_WIDTH, поэтому левый край сайдбара известен:
 // ширина экрана − PANEL_WIDTH − 3; верх строк — половина высоты экрана − 6 × строк
 // (как в ванильном Hud.displayScoreboardSidebar). Фон переносит gui.vsh.
 const int PANEL_MARKER_RED = 254;
-const float PANEL_WIDTH = 150.0;
+const float PANEL_WIDTH = 210.0;
 const float PANEL_MARGIN = 4.0;
 const vec3 PANEL_RADAR_COLOR = vec3(233.0, 114.0, 24.0) / 255.0;
+const vec3 PANEL_GRAY_COLOR = vec3(166.0) / 255.0;
 const vec3 LEGACY_COLORS[16] = vec3[16](
     vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.667), vec3(0.0, 0.667, 0.0), vec3(0.0, 0.667, 0.667),
     vec3(0.667, 0.0, 0.0), vec3(0.667, 0.0, 0.667), vec3(1.0, 0.667, 0.0), vec3(0.667, 0.667, 0.667),
@@ -95,6 +96,8 @@ void main() {
         vec3 color = vec3(1.0);
         if (rgb.g == 5) {
             color = PANEL_RADAR_COLOR;
+        } else if (rgb.g == 6) {
+            color = PANEL_GRAY_COLOR;
         } else if (rgb.g >= 16) {
             color = LEGACY_COLORS[rgb.g - 16];
         }

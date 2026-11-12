@@ -25,7 +25,7 @@ out vec4 vertexColor;
 // потому что ширина панели постоянна. Число строк n восстанавливается по y:
 // низ = половина высоты + 3n, верх строк = половина высоты − 6n.
 // Строка заголовка пустая — её прямоугольник схлопывается в линию.
-const float PANEL_WIDTH = 150.0;
+const float PANEL_WIDTH = 210.0;
 const float PANEL_MARGIN = 4.0;
 
 bool isWhole(float value) {
