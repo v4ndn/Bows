@@ -36,8 +36,9 @@ void main() {
     vec3 position = Position;
 
     if (ProjMat[2][3] == 0.0 && all(lessThan(Color.rgb, vec3(0.002))) && Color.a < 0.999) {
-        float guiWidth = round(2.0 / ProjMat[0][0]);
-        float guiHeight = round(-2.0 / ProjMat[1][1]);
+        // игра округляет размер GUI вверх, а в проекции он дробный
+        float guiWidth = ceil(2.0 / ProjMat[0][0] - 0.001);
+        float guiHeight = ceil(-2.0 / ProjMat[1][1] - 0.001);
         float halfHeight = floor(guiHeight / 2.0);
         float left = guiWidth - PANEL_WIDTH - 3.0;
         bool onEdge = abs(position.x - (guiWidth - 1.0)) < 0.01 || abs(position.x - (left - 2.0)) < 0.01;

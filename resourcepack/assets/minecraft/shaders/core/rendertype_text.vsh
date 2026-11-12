@@ -84,8 +84,9 @@ void main() {
 
     bool isPanel = rgb.r == PANEL_MARKER_RED && rgb.g >= 3 && rgb.g <= 31 && rgb.b >= 1 && rgb.b <= 15;
     if (isPanel && ProjMat[2][3] == 0.0) {
-        float guiWidth = round(2.0 / ProjMat[0][0]);
-        float guiHeight = round(-2.0 / ProjMat[1][1]);
+        // игра округляет размер GUI вверх, а в проекции он дробный
+        float guiWidth = ceil(2.0 / ProjMat[0][0] - 0.001);
+        float guiHeight = ceil(-2.0 / ProjMat[1][1] - 0.001);
         float lines = float(rgb.b);
         float left = guiWidth - PANEL_WIDTH - 3.0;
         float top = floor(guiHeight / 2.0) - 6.0 * lines;
