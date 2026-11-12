@@ -38,6 +38,23 @@ const float HUD_OFFSET_PIXELS = 200.0;
 // на сколько GUI-пикселей текст выезжает снизу при появлении
 const float HUD_SLIDE = 10.0;
 
+// ---- Bows: панель участников в левом верхнем углу (GamePanel.java) ----
+//
+// Это сайдбар скорборда. Цвет текста строк — метка (254, вид, число строк):
+// вид 3 — белый, 5 — радар, 16..31 — цвет команды (код цвета 0..15).
+// Все строки одной ширины PANEL_WIDTH, поэтому левый край сайдбара известен:
+// ширина экрана − PANEL_WIDTH − 3; верх строк — половина высоты экрана − 6 × строк
+// (как в ванильном Hud.displayScoreboardSidebar). Фон переносит gui.vsh.
+const int PANEL_MARKER_RED = 254;
+const float PANEL_WIDTH = 150.0;
+const float PANEL_MARGIN = 4.0;
+const vec3 PANEL_RADAR_COLOR = vec3(233.0, 114.0, 24.0) / 255.0;
+const vec3 LEGACY_COLORS[16] = vec3[16](
+    vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.667), vec3(0.0, 0.667, 0.0), vec3(0.0, 0.667, 0.667),
+    vec3(0.667, 0.0, 0.0), vec3(0.667, 0.0, 0.667), vec3(1.0, 0.667, 0.0), vec3(0.667, 0.667, 0.667),
+    vec3(0.333, 0.333, 0.333), vec3(0.333, 0.333, 1.0), vec3(0.333, 1.0, 0.333), vec3(0.333, 1.0, 1.0),
+    vec3(1.0, 0.333, 0.333), vec3(1.0, 0.333, 1.0), vec3(1.0, 1.0, 0.333), vec3(1.0, 1.0, 1.0));
+
 float easeOutCubic(float x) {
     return 1.0 - pow(1.0 - x, 3.0);
 }
@@ -63,6 +80,24 @@ void main() {
 
         position.xy = target + (position.xy - vanillaCenter) * scale;
         vertexColor = vec4(isHudShadow ? HUD_COLOR * 0.25 : HUD_COLOR, t);
+    }
+
+    bool isPanel = rgb.r == PANEL_MARKER_RED && rgb.g >= 3 && rgb.g <= 31 && rgb.b >= 1 && rgb.b <= 15;
+    if (isPanel && ProjMat[2][3] == 0.0) {
+        float guiWidth = round(2.0 / ProjMat[0][0]);
+        float guiHeight = round(-2.0 / ProjMat[1][1]);
+        float lines = float(rgb.b);
+        float left = guiWidth - PANEL_WIDTH - 3.0;
+        float top = floor(guiHeight / 2.0) - 6.0 * lines;
+        position.xy += vec2(PANEL_MARGIN - left, PANEL_MARGIN - top);
+
+        vec3 color = vec3(1.0);
+        if (rgb.g == 5) {
+            color = PANEL_RADAR_COLOR;
+        } else if (rgb.g >= 16) {
+            color = LEGACY_COLORS[rgb.g - 16];
+        }
+        vertexColor = vec4(color, Color.a) * texelFetch(Sampler2, UV2 / 16, 0);
     }
 
     gl_Position = ProjMat * ModelViewMat * vec4(position, 1.0);
