@@ -61,6 +61,7 @@ public class Bows extends JavaPlugin {
         Bukkit.getServer().getPluginManager().registerEvents(new StarterChoiceDialog.Handler(), this);
         TabArrows.start();
         RadiusHighlight.start();
+        GathererBoost.startAura();
         Bukkit.getServer().getPluginManager().registerEvents(new ResourcePackSync(), this);
         ResourcePackSync.sync();
 

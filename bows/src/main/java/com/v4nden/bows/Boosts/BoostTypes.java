@@ -17,6 +17,7 @@ import com.v4nden.bows.Boosts.Types.GlowRandomBoost;
 import com.v4nden.bows.Boosts.Types.FireArrowsBoost;
 import com.v4nden.bows.Boosts.Types.FreezeBoost;
 import com.v4nden.bows.Boosts.Types.IBoostType;
+import com.v4nden.bows.Boosts.Types.ImpactBoost;
 import com.v4nden.bows.Boosts.Types.GolemBombBoost;
 import com.v4nden.bows.Boosts.Types.NoRegenAuraBoost;
 import com.v4nden.bows.Boosts.Types.VampirismBoost;
@@ -39,6 +40,8 @@ import com.v4nden.bows.Boosts.Types.RegenerationBoost;
 import com.v4nden.bows.Boosts.Types.RiderBoost;
 import com.v4nden.bows.Boosts.Types.SlownessAuraBoost;
 import com.v4nden.bows.Boosts.Types.SpeedBoost;
+import com.v4nden.bows.Boosts.Types.SummonClosestBoost;
+import com.v4nden.bows.Boosts.Types.SummonRandomBoost;
 import com.v4nden.bows.Boosts.Types.TeleportClosestBoost;
 import com.v4nden.bows.Boosts.Types.TeleportRandomBoost;
 import com.v4nden.bows.Boosts.Types.TimestopBoost;
@@ -52,6 +55,8 @@ public enum BoostTypes {
 	RIDER(new RiderBoost()),
 	TELEPORTRANDOM(new TeleportRandomBoost()),
 	TELEPORTCLOSEST(new TeleportClosestBoost()),
+	SUMMONRANDOM(new SummonRandomBoost()),
+	SUMMONCLOSEST(new SummonClosestBoost()),
 	GLOWCLOSEST(new GlowClosestBoost()),
 	LOCATOR(new LocatorBoost()),
 	GLOWRANDOM(new GlowRandomBoost()),
@@ -87,7 +92,8 @@ public enum BoostTypes {
 	GOLEMBOMB(new GolemBombBoost()),
 	FREEZE(new FreezeBoost()),
 	METEORSHOWER(new MeteorShowerBoost()),
-	RAGE(new RageBoost());
+	RAGE(new RageBoost()),
+	IMPACT(new ImpactBoost());
 
 	private final IBoostType type;
 

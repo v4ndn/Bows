@@ -59,6 +59,19 @@ public class Game implements Listener {
     public static int startPlayerCount = 0;
     public static ArrayList<Player> gamePlayers = new ArrayList<Player>();
 
+    // предел обычных бустов в инвентаре (стартовый не считается): сверх него буст не выдаётся
+    public static final int MAX_BOOSTS = 10;
+
+    private static final long BOOST_PERIOD_TICKS = 20 * 30L;
+    // барьер сужается до ширины BORDER_MIN_SIZE за BORDER_SHRINK_SECONDS, затем финал:
+    // до ширины BORDER_FINAL_SIZE за BORDER_FINAL_SECONDS, бусты — раз в FINAL_BOOST_PERIOD_TICKS
+    private static final double BORDER_MIN_SIZE = 5;
+    private static final long BORDER_SHRINK_SECONDS = 7 * 60;
+    private static final double BORDER_FINAL_SIZE = 2;
+    private static final long BORDER_FINAL_SECONDS = 3 * 60;
+    private static final long FINAL_BOOST_PERIOD_TICKS = 20 * 10L;
+    private static boolean isFinal = false;
+
     private static int taskActionTimer;
     private static int taskRenewArrowsTimer;
     private static int taskTabInfos;
@@ -115,6 +128,7 @@ public class Game implements Listener {
         StarterChoiceDialog.reset();
 
         gameStart = System.currentTimeMillis();
+        isFinal = false;
 
         Random random = new Random();
 
@@ -154,6 +168,10 @@ public class Game implements Listener {
                 p.setPlayerListFooter(message);
 
             }
+            // по размеру, а не по таймеру: так финал не сдвинется, если барьер замирал
+            if (!isFinal && gameLocation.getWorld().getWorldBorder().getSize() <= BORDER_MIN_SIZE + .01) {
+                startFinal();
+            }
         }, 0L, 20L);
         taskActionTimer = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, () -> {
             long diff = System.currentTimeMillis() - gameStart;
@@ -172,27 +190,13 @@ public class Game implements Listener {
 
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
                         new TextComponent(
-                                "[" + Math.round(diff / 1000) + "]"));
+                                "[" + Math.round(diff / 1000) + "] ["
+                                        + StarterBoosts.regularBoostSlots(player).size() + "/" + MAX_BOOSTS + "]"));
             });
 
         }, 0L, 2L);
-        taskBoosts = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, () -> {
-
-            List<String> boostsList = new ArrayList<>();
-
-            for (BoostTypes type : BoostTypes.values()) {
-                boostsList.add(type.name());
-            }
-
-            BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(), "Буст!");
-
-            gamePlayers.forEach((player) -> {
-                int rnd = new Random().nextInt(boostsList.size());
-                player.getInventory()
-                        .addItem(BoostTypes.valueOf(boostsList.get(rnd)).getBoost(player).createItem());
-            });
-
-        }, 0L, 20 * 30L);
+        taskBoosts = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, Game::giveBoosts,
+                0L, BOOST_PERIOD_TICKS);
         taskRenewArrowsTimer = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, () -> {
 
             gamePlayers.forEach((player) -> {
@@ -212,7 +216,34 @@ public class Game implements Listener {
         // граница — в мире игры (у каждой игры свой мир, см. GameWorlds)
         location.getWorld().getWorldBorder().setSize(1400);
         location.getWorld().getWorldBorder().setCenter(location);
-        location.getWorld().getWorldBorder().setSize(5, 7 * 60);
+        location.getWorld().getWorldBorder().setSize(BORDER_MIN_SIZE, BORDER_SHRINK_SECONDS);
+    }
+
+    private static void startFinal() {
+        isFinal = true;
+        gameLocation.getWorld().getWorldBorder().setSize(BORDER_FINAL_SIZE, BORDER_FINAL_SECONDS);
+        Bukkit.getServer().getScheduler().cancelTask(taskBoosts);
+        taskBoosts = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, Game::giveBoosts,
+                FINAL_BOOST_PERIOD_TICKS, FINAL_BOOST_PERIOD_TICKS);
+    }
+
+    private static void giveBoosts() {
+        List<String> boostsList = new ArrayList<>();
+
+        for (BoostTypes type : BoostTypes.values()) {
+            boostsList.add(type.name());
+        }
+
+        BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(), "Буст!");
+
+        gamePlayers.forEach((player) -> {
+            if (StarterBoosts.regularBoostSlots(player).size() >= MAX_BOOSTS) {
+                return;
+            }
+            int rnd = new Random().nextInt(boostsList.size());
+            player.getInventory()
+                    .addItem(BoostTypes.valueOf(boostsList.get(rnd)).getBoost(player).createItem());
+        });
     }
 
     public static void stopGame() {
@@ -225,6 +256,7 @@ public class Game implements Listener {
         Bukkit.getServer().getScheduler().cancelTask(taskRenewArrowsTimer);
         Bukkit.getServer().getScheduler().cancelTask(taskTabInfos);
         Bukkit.getServer().getScheduler().cancelTask(taskBoosts);
+        isFinal = false;
         for (Player p : playersToReset) {
             p.setGameMode(GameMode.ADVENTURE);
             p.teleport(GameWorlds.lobbySpawn());

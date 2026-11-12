@@ -76,7 +76,7 @@ public class BreakBoost implements IBoostType {
                 .build(player);
     }
 
-    private static boolean isLanded(Player player) {
+    static boolean isLanded(Player player) {
         return player.isOnGround()
                 || player.getLocation().clone().subtract(0, 0.1, 0).getBlock().getType().isSolid();
     }
@@ -107,7 +107,7 @@ public class BreakBoost implements IBoostType {
     }
 
     // Подбрасывает копии верхних блоков вокруг точки удара; сами блоки остаются на месте
-    private static void spawnDebris(Location center) {
+    static void spawnDebris(Location center) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         List<FallingBlock> debris = new ArrayList<>();
         Set<UUID> debrisIds = new HashSet<>();
