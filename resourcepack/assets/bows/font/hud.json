@@ -478,15 +478,6 @@
       ]
     },
     {
-      "type": "bitmap",
-      "file": "bows:font/hud/panel.png",
-      "ascent": 8,
-      "height": 9,
-      "chars": [
-        ""
-      ]
-    },
-    {
       "type": "space",
       "advances": {
         "": -155,
@@ -504,8 +495,7 @@
     {
       "type": "space",
       "advances": {
-        "": -2,
-        "": -213
+        "": -210
       }
     }
   ]

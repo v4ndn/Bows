@@ -48,12 +48,14 @@ const float STATUS_SHIFT_Y = 42.0;
 
 // ---- Bows: панель участников в левом верхнем углу (GamePanel.java) ----
 //
-// Это сайдбар скорборда. Цвет текста строк — метка (254, вид, число строк):
+// Это сайдбар скорборда. Цвет текста строк — метка (254, вид, число строк);
+// красный 253 — копия строки для тени: сдвиг на 1px и затемнение, как у ванильной тени.
 // вид 3 — белый, 5 — радар, 6 — серый (хп и высота), 16..31 — цвет команды (код цвета 0..15).
 // Все строки одной ширины PANEL_WIDTH, поэтому левый край сайдбара известен:
 // ширина экрана − PANEL_WIDTH − 3; верх строк — половина высоты экрана − 6 × строк
 // (как в ванильном Hud.displayScoreboardSidebar). Фон переносит gui.vsh.
 const int PANEL_MARKER_RED = 254;
+const int PANEL_SHADOW_RED = 253;
 const float PANEL_WIDTH = 210.0;
 const float PANEL_MARGIN = 4.0;
 const vec3 PANEL_RADAR_COLOR = vec3(233.0, 114.0, 24.0) / 255.0;
@@ -96,7 +98,8 @@ void main() {
         vertexColor = vec4(1.0, 1.0, 1.0, Color.a) * texelFetch(Sampler2, UV2 / 16, 0);
     }
 
-    bool isPanel = rgb.r == PANEL_MARKER_RED && rgb.g >= 3 && rgb.g <= 31 && rgb.b >= 1 && rgb.b <= 15;
+    bool isPanelShadow = rgb.r == PANEL_SHADOW_RED;
+    bool isPanel = (rgb.r == PANEL_MARKER_RED || isPanelShadow) && rgb.g >= 3 && rgb.g <= 31 && rgb.b >= 1 && rgb.b <= 15;
     if (isPanel && ProjMat[2][3] == 0.0) {
         // игра округляет размер GUI вверх, а в проекции он дробный
         float guiWidth = ceil(2.0 / ProjMat[0][0] - 0.001);
@@ -113,6 +116,10 @@ void main() {
             color = PANEL_GRAY_COLOR;
         } else if (rgb.g >= 16) {
             color = LEGACY_COLORS[rgb.g - 16];
+        }
+        if (isPanelShadow) {
+            position.xy += vec2(1.0);
+            color *= 0.25;
         }
         vertexColor = vec4(color, Color.a) * texelFetch(Sampler2, UV2 / 16, 0);
     }
