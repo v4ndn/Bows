@@ -2,7 +2,7 @@
   "providers": [
     {
       "type": "bitmap",
-      "file": "minecraft:item/blaze_powder.png",
+      "file": "bows:font/icons/arrowgun.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -11,7 +11,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/black_dye.png",
+      "file": "bows:font/icons/blindnessaura.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -20,7 +20,7 @@
     },
     {
       "type": "bitmap",
-      "file": "bows:item/break.png",
+      "file": "bows:font/icons/break.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -29,7 +29,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/lime_dye.png",
+      "file": "bows:font/icons/bridge.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -38,7 +38,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/feather.png",
+      "file": "bows:font/icons/dash.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -47,7 +47,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/netherite_scrap.png",
+      "file": "bows:font/icons/drill.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -56,7 +56,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/magma_cream.png",
+      "file": "bows:font/icons/firearrows.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -65,7 +65,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/breeze_rod.png",
+      "file": "bows:font/icons/flight.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -74,7 +74,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/prismarine_shard.png",
+      "file": "bows:font/icons/freeze.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -83,7 +83,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/flint.png",
+      "file": "bows:font/icons/fulldraw.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -92,7 +92,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:block/glass.png",
+      "file": "bows:font/icons/glassbox.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -101,7 +101,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:block/glass.png",
+      "file": "bows:font/icons/glasspilar.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -110,7 +110,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/quartz.png",
+      "file": "bows:font/icons/glasswall.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -119,7 +119,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/popped_chorus_fruit.png",
+      "file": "bows:font/icons/globallevitation.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -128,7 +128,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/glowstone_dust.png",
+      "file": "bows:font/icons/glowall.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -137,7 +137,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/glowstone_dust.png",
+      "file": "bows:font/icons/glowclosest.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -146,7 +146,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/glowstone_dust.png",
+      "file": "bows:font/icons/glowrandom.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -155,7 +155,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/gunpowder.png",
+      "file": "bows:font/icons/golembomb.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -164,7 +164,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/fermented_spider_eye.png",
+      "file": "bows:font/icons/invisibility.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -173,7 +173,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/phantom_membrane.png",
+      "file": "bows:font/icons/levitation.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -182,7 +182,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/shulker_shell.png",
+      "file": "bows:font/icons/levitationaura.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -191,7 +191,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/prismarine_crystals.png",
+      "file": "bows:font/icons/lightning.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -200,7 +200,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/echo_shard.png",
+      "file": "bows:font/icons/locator.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -209,7 +209,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/fire_charge.png",
+      "file": "bows:font/icons/meteor.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -218,7 +218,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/blaze_rod.png",
+      "file": "bows:font/icons/meteorshower.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -227,7 +227,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/coal.png",
+      "file": "bows:font/icons/noregenaura.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -236,7 +236,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/netherite_ingot.png",
+      "file": "bows:font/icons/rage.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -245,7 +245,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/orange_dye.png",
+      "file": "bows:font/icons/rain.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -254,7 +254,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/ghast_tear.png",
+      "file": "bows:font/icons/regeneration.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -263,7 +263,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/diamond.png",
+      "file": "bows:font/icons/reroll.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -272,7 +272,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/bowl.png",
+      "file": "bows:font/icons/rider.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -281,7 +281,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/totem_of_undying.png",
+      "file": "bows:font/icons/secondchance.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -290,7 +290,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/rabbit_foot.png",
+      "file": "bows:font/icons/shrink.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -299,7 +299,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/gray_dye.png",
+      "file": "bows:font/icons/slownessaura.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -308,7 +308,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/heart_of_the_sea.png",
+      "file": "bows:font/icons/smite.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -317,7 +317,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/light_blue_dye.png",
+      "file": "bows:font/icons/speed.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -326,7 +326,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/emerald.png",
+      "file": "bows:font/icons/swap.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -335,7 +335,7 @@
     },
     {
       "type": "bitmap",
-      "file": "bows:item/teleportclosest.png",
+      "file": "bows:font/icons/teleportclosest.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -344,7 +344,7 @@
     },
     {
       "type": "bitmap",
-      "file": "bows:item/teleportrandom.png",
+      "file": "bows:font/icons/teleportrandom.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -353,7 +353,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/nautilus_shell.png",
+      "file": "bows:font/icons/thunderstorm.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -362,7 +362,7 @@
     },
     {
       "type": "bitmap",
-      "file": "bows:item/timestop_icon.png",
+      "file": "bows:font/icons/timestop.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -371,7 +371,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:block/tnt_side.png",
+      "file": "bows:font/icons/tnt.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -380,7 +380,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/nether_brick.png",
+      "file": "bows:font/icons/vampirism.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -389,7 +389,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/light_gray_dye.png",
+      "file": "bows:font/icons/wind.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -398,7 +398,7 @@
     },
     {
       "type": "bitmap",
-      "file": "bows:item/random.png",
+      "file": "bows:font/icons/random.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -407,7 +407,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/leather.png",
+      "file": "bows:font/icons/quiver.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -416,7 +416,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/rabbit_hide.png",
+      "file": "bows:font/icons/small.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -425,7 +425,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/glistering_melon_slice.png",
+      "file": "bows:font/icons/tough.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -434,7 +434,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/slime_ball.png",
+      "file": "bows:font/icons/doublejump.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -443,7 +443,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/turtle_scute.png",
+      "file": "bows:font/icons/elusive.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -452,7 +452,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/mace.png",
+      "file": "bows:font/icons/giant.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -461,7 +461,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/chainmail_chestplate.png",
+      "file": "bows:font/icons/chainmail.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -470,7 +470,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/iron_pickaxe.png",
+      "file": "bows:font/icons/gatherer.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -479,7 +479,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/gunpowder.png",
+      "file": "bows:font/icons/impact.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -488,7 +488,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/echo_shard.png",
+      "file": "bows:font/icons/summonclosest.png",
       "ascent": 7,
       "height": 8,
       "chars": [
@@ -497,7 +497,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:item/nautilus_shell.png",
+      "file": "bows:font/icons/summonrandom.png",
       "ascent": 7,
       "height": 8,
       "chars": [

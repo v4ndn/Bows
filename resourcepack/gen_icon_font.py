@@ -79,6 +79,36 @@ for icon in icons:
         codepoints[icon] = next_codepoint
         next_codepoint += 1
 
+# Копии текстур иконок с почти прозрачным пикселем в крайнем правом столбце:
+# ширина символа bitmap считается по последнему непрозрачному столбцу, и иконки
+# с пустым краем (слизь и т.п.) были бы уже остальных — съезжали бы строки и
+# колонки, где ширина иконки считается постоянной (таб, панель участников).
+import zipfile
+from io import BytesIO
+
+from PIL import Image
+
+CLIENT_JAR = os.environ.get('MC_CLIENT_JAR', os.path.expanduser(
+    '~/.local/share/PrismLauncher/libraries/com/mojang/minecraft/1.21.11/minecraft-1.21.11-client.jar'))
+PADDED = os.path.join(ROOT, 'assets', 'bows', 'textures', 'font', 'icons')
+client = zipfile.ZipFile(CLIENT_JAR)
+
+
+def padded(icon, texture):
+    namespace, path = texture.split(':', 1)
+    if namespace == 'minecraft':
+        image = Image.open(BytesIO(client.read(f'assets/minecraft/textures/{path}')))
+    else:
+        image = Image.open(os.path.join(ROOT, 'assets', namespace, 'textures', path))
+    image = image.convert('RGBA')
+    x, y = image.width - 1, image.height - 1
+    if image.getpixel((x, y))[3] == 0:
+        image.putpixel((x, y), (255, 255, 255, 1))
+    image.save(os.path.join(PADDED, f'{icon}.png'))
+    return f'bows:font/icons/{icon}.png'
+
+
+os.makedirs(PADDED, exist_ok=True)
 providers = [{'type': 'space', 'advances': {' ': GAP_ADVANCE}}]
 small_providers = []
 table = []
@@ -89,7 +119,7 @@ for icon, codepoint in sorted(codepoints.items(), key=lambda item: item[1]):
     if icon not in icons:
         continue
     char = chr(codepoint)
-    texture = icons[icon]
+    texture = padded(icon, icons[icon])
     providers.append({'type': 'bitmap', 'file': texture, 'ascent': ICON_ASCENT, 'height': ICON_HEIGHT,
                       'chars': [char]})
     small_providers.append({'type': 'bitmap', 'file': texture, 'ascent': SMALL_ICON_ASCENT,
@@ -99,7 +129,6 @@ for icon, codepoint in sorted(codepoints.items(), key=lambda item: item[1]):
 # Сетка 4x4 точек: центр 2x2 — смотрящий, две точки края, ближайшие по углу —
 # направление на игрока (0 = вперёд, по часовой). Символы Брайля для этого не
 # годятся: у них в шрифте разная ширина, и колонки таба бы съезжали.
-from PIL import Image
 import math
 
 RADAR_FONT = os.path.join(ROOT, 'assets', 'bows', 'font', 'radar.json')
