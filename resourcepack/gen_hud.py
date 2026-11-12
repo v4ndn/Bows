@@ -14,6 +14,9 @@
 Глифы bitmap получают ширину по последнему непрозрачному столбцу и шаг на 1px
 больше, поэтому после кусков заливки идёт пробел −1 (символы шрифта space).
 
+Здесь же фон строк панели участников (Game/GamePanel.java): полупрозрачный
+прямоугольник шириной панели + 2px с каждой стороны и высотой строки.
+
 Запуск: python3 gen_hud.py
 """
 import json
@@ -35,6 +38,10 @@ RINGS = 3
 BAR_WIDTH = 182 - RINGS * (RING + 2)
 PATTERN = 4
 FILL_PIECES = [1, 2, 4, 8, 16, 32, 64, 128]
+# ширина панели участников — как WIDTH в GamePanel.java
+PANEL_WIDTH = 210
+PANEL_PADDING = 2
+PANEL_LINE = 9
 SPACES = [-BAR_WIDTH, -1, 1, 2, 4, 8, 16, 32, 64, 128]
 
 # коды символов (должны совпадать с StatusBar.java)
@@ -45,8 +52,12 @@ FILL_FIRST = 0xE321
 FILL_1_SHIFTED = 0xE329
 SPACE_FIRST = 0xE330
 DIRECTION_FIRST = 0xE340
+PANEL_BACKGROUND = 0xE350
+PANEL_SPACE_FIRST = 0xE351
 
 BACKGROUND = (0, 0, 0, 130)
+# как ванильный фон сайдбара (непрозрачность 0.3)
+PANEL_BACKGROUND_COLOR = (0, 0, 0, 77)
 BORDER = (0, 0, 0, 200)
 BOOST_COLOR = (233, 114, 24, 255)
 TIMER_COLOR = (244, 235, 229, 255)
@@ -143,8 +154,17 @@ providers.append(bitmap('frame.png', frame(), FRAME))
 for i, width in enumerate(FILL_PIECES):
     providers.append(bitmap(f'fill_{width}.png', fill(width), FILL_FIRST + i))
 providers.append(bitmap('fill_1_shifted.png', fill(1, 2), FILL_1_SHIFTED))
+panel_width = PANEL_WIDTH + 2 * PANEL_PADDING
+Image.new('RGBA', (panel_width, PANEL_LINE), PANEL_BACKGROUND_COLOR).save(os.path.join(TEXTURES, 'panel.png'))
+# высота строки 9, верх на 1px выше текста: строки фона идут встык
+providers.append({'type': 'bitmap', 'file': 'bows:font/hud/panel.png', 'ascent': 8, 'height': PANEL_LINE,
+                  'chars': [chr(PANEL_BACKGROUND)]})
 providers.append({'type': 'space',
                   'advances': {chr(SPACE_FIRST + i): advance for i, advance in enumerate(SPACES)}})
+# отступ влево перед фоном и возврат к началу строки после него
+providers.append({'type': 'space', 'advances': {
+    chr(PANEL_SPACE_FIRST): -PANEL_PADDING,
+    chr(PANEL_SPACE_FIRST + 1): -(panel_width + 1 - PANEL_PADDING)}})
 
 with open(FONT, 'w', encoding='utf-8') as f:
     json.dump({'providers': providers}, f, ensure_ascii=False, indent=2)
