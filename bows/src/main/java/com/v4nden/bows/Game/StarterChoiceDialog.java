@@ -2,8 +2,12 @@ package com.v4nden.bows.Game;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -35,8 +39,8 @@ import net.kyori.adventure.text.event.ClickCallback;
 import net.kyori.adventure.text.event.ClickEvent;
 
 /**
- * Выбор стартового буста в начале игры: сетка иконок стартовых бустов (как в /info),
- * последняя иконка — случайный буст. Клик по иконке выдаёт буст и закрывает окно,
+ * Выбор стартового буста в начале игры: каждому игроку — свои OFFER_SIZE случайных
+ * стартовых бустов (иконками, как в /info), последняя иконка — случайный из них. Клик по иконке выдаёт буст и закрывает окно,
  * Esc — играть без стартового буста. Один выбор на игру.
  *
  * Окно открывается, когда клиент загрузил мир игры: переход в другой мир
@@ -48,11 +52,15 @@ public class StarterChoiceDialog {
     private static final int COLUMNS = 5;
     // ряды через 3 строки по 9px: зазор между рядами как между иконками (см. InfoDialog)
     private static final String ROW_BREAK = "\n\n\n";
+    // сколько стартовых бустов предлагается на выбор
+    private static final int OFFER_SIZE = 3;
 
     private static final Random random = new Random();
 
     // кто уже выбрал в текущей игре
     private static final Set<UUID> chosen = new HashSet<>();
+    // что предложено игроку в текущей игре: при повторном открытии окна — те же бусты
+    private static final Map<UUID, List<StarterBoostTypes>> offers = new HashMap<>();
     // клики по окну прошлой игры не должны срабатывать
     private static long gameId = 0;
     // кому показать окно, как только клиент загрузит мир игры
@@ -62,6 +70,7 @@ public class StarterChoiceDialog {
 
     public static void reset() {
         chosen.clear();
+        offers.clear();
         pending.clear();
         gameId++;
     }
@@ -92,7 +101,7 @@ public class StarterChoiceDialog {
         long game = gameId;
         ClickCallback.Options once = ClickCallback.Options.builder()
                 .uses(1).lifetime(Duration.ofMinutes(10)).build();
-        StarterBoostTypes[] types = StarterBoostTypes.values();
+        List<StarterBoostTypes> types = offers.computeIfAbsent(player.getUniqueId(), uuid -> randomOffer());
 
         // пустая строка сверху: иконка выше обычной строки и иначе вылезла бы за край
         TextComponent.Builder grid = Component.text().content("\n");
@@ -113,7 +122,7 @@ public class StarterChoiceDialog {
         grid.append(BoostIcons.icon("random", BoostIcons.LARGE_FONT)
                 .clickEvent(ClickEvent.callback(audience -> {
                     if (audience instanceof Player p) {
-                        give(p, types[random.nextInt(types.length)], game);
+                        give(p, types.get(random.nextInt(types.size())), game);
                     }
                 }, once)));
         grid.append(Component.text("\n"));
@@ -128,6 +137,12 @@ public class StarterChoiceDialog {
                         .build())
                 .type(DialogType.notice(hidden)));
         player.showDialog(dialog);
+    }
+
+    private static List<StarterBoostTypes> randomOffer() {
+        List<StarterBoostTypes> all = new ArrayList<>(Arrays.asList(StarterBoostTypes.values()));
+        Collections.shuffle(all, random);
+        return new ArrayList<>(all.subList(0, Math.min(OFFER_SIZE, all.size())));
     }
 
     // перед каждой иконкой, кроме первой: отступ или переход на новый ряд

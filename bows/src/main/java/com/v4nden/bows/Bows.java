@@ -22,6 +22,7 @@ import com.v4nden.bows.Game.GameStarter;
 import com.v4nden.bows.Game.PeacefulExplosions;
 import com.v4nden.bows.Game.RadiusHighlight;
 import com.v4nden.bows.Utils.ResourcePackSync;
+import com.v4nden.bows.Game.GamePanel;
 import com.v4nden.bows.Game.TabArrows;
 import com.v4nden.bows.Game.GameCommand.DummyCommand;
 import com.v4nden.bows.Game.GameCommand.HudTextCommand;
@@ -60,6 +61,7 @@ public class Bows extends JavaPlugin {
         Bukkit.getServer().getPluginManager().registerEvents(new GathererBoost.Handler(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new StarterChoiceDialog.Handler(), this);
         TabArrows.start();
+        GamePanel.start();
         RadiusHighlight.start();
         GathererBoost.startAura();
         Bukkit.getServer().getPluginManager().registerEvents(new ResourcePackSync(), this);
@@ -74,6 +76,7 @@ public class Bows extends JavaPlugin {
         GameStarter.cancel();
         Game.stopGame();
         TabArrows.stop();
+        GamePanel.stop();
         RadiusHighlight.stop();
 
         Game.isRunning = false;

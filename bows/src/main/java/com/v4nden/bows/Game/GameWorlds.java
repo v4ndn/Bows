@@ -61,6 +61,8 @@ public class GameWorlds {
                 // правило недоступно — пропускаем
             }
         }
+        // панель локатора встала бы на место полоски опыта, где StatusBar
+        world.setGameRule(GameRule.LOCATOR_BAR, false);
         return world;
     }
 

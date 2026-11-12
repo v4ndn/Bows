@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 import com.v4nden.bows.Utils.HudText;
 
-/** Тест HUD-текста: /hudtext <секунды> <текст...> */
+/** Тест HUD-текста: /hudtext <секунды> <текст...>, «@ник» — голова скина игрока */
 public class HudTextCommand implements CommandExecutor, TabCompleter {
 
     @Override

@@ -1,6 +1,8 @@
 package com.v4nden.bows.Game;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -19,6 +21,8 @@ import net.md_5.bungee.api.ChatColor;
 public class KillAnnouncer {
     private static final Map<UUID, Integer> killsThisGame = new HashMap<>();
     private static boolean firstBloodTaken = false;
+    // сколько мест показывать в топе матча
+    private static final int TOP_SIZE = 5;
 
     public static void reset() {
         killsThisGame.clear();
@@ -50,6 +54,26 @@ public class KillAnnouncer {
                 }
             }
         }
+    }
+
+    /** Топ матча по убийствам — одним сообщением в чат. */
+    public static void announceTop() {
+        String accent = ChatColor.of("#e97218").toString();
+        String reset = ChatColor.RESET.toString();
+        List<Map.Entry<UUID, Integer>> top = new ArrayList<>(killsThisGame.entrySet());
+        top.sort(Map.Entry.<UUID, Integer>comparingByValue().reversed());
+
+        StringBuilder message = new StringBuilder("Топ матча по убийствам:");
+        if (top.isEmpty()) {
+            message.append("\n убийств не было");
+        }
+        for (int i = 0; i < Math.min(TOP_SIZE, top.size()); i++) {
+            // игрок мог уже выйти с сервера
+            String name = Bukkit.getOfflinePlayer(top.get(i).getKey()).getName();
+            message.append("\n ").append(i + 1).append(". ").append(accent).append(name == null ? "?" : name)
+                    .append(reset).append(" — ").append(top.get(i).getValue());
+        }
+        BowsUtils.broadcastSystemMessage(Bukkit.getOnlinePlayers(), message.toString());
     }
 
     private static void announce(String sound, String message) {

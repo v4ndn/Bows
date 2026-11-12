@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -59,6 +60,9 @@ public class Boost implements Listener {
     private int lockedSlot = -1;
     private boolean passive = false;
     private double previewRadius = 0;
+    // второе выкидывание за это время удаляет буст
+    private static final long DROP_CONFIRM_MILLIS = 1500;
+    private long lastDropAttempt = 0;
 
     // живые (ещё не использованные) бусты по uid предмета
     private static final Map<UUID, Boost> registry = new HashMap<>();
@@ -293,9 +297,24 @@ public class Boost implements Listener {
         if (this.used) {
             e.getHandlers().unregister(this);
         }
-        if (e.getItemDrop().getItemStack().equals(this.item)) {
-            e.setCancelled(true);
+        if (!e.getItemDrop().getItemStack().equals(this.item)) {
+            return;
         }
+        long now = System.currentTimeMillis();
+        // стартовый буст закреплён в слоте и не удаляется
+        if (lockedSlot >= 0 || now - lastDropAttempt > DROP_CONFIRM_MILLIS) {
+            e.setCancelled(true);
+            if (lockedSlot < 0) {
+                lastDropAttempt = now;
+                e.getPlayer().sendTitle("", ChatColor.of("#a6a6a6") + "Выкинь ещё раз, чтобы удалить буст", 0, 20, 5);
+            }
+            return;
+        }
+        // предмет уже вынут из инвентаря — убираем выпавшую сущность, и буста больше нет
+        e.getItemDrop().remove();
+        e.getPlayer().resetTitle();
+        e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_ITEM_BREAK, SoundCategory.MASTER, 1, 1);
+        dispose();
     }
 
     @EventHandler

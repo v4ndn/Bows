@@ -15,38 +15,27 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate.PlayerInfo;
 import com.v4nden.bows.Bows;
-import com.v4nden.bows.Boosts.Boost;
-import com.v4nden.bows.Boosts.BoostIcons;
-import com.v4nden.bows.Boosts.StarterBoosts;
+import com.v4nden.bows.Utils.PlayerHeads;
 
-import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.ShadowColor;
-import net.kyori.adventure.text.format.TextColor;
 import net.md_5.bungee.api.ChatColor;
 
 /**
  * Таб и ник над головой.
  *
  * Ник — ванильный: суффикс команды на основном скорборде с хп участника.
- * Таб — разный для каждого смотрящего: имя в табе отправляется пакетом каждому
- * игроку отдельно (иконка стартового буста, радар с направлением на участника
- * относительно взгляда смотрящего, ник, хп, высота и статистика). Имя в табе
- * перекрывает суффикс команды, поэтому в табе суффикс не дублируется.
+ * Таб — голова скина, ник и статистика (победы, убийства, смерти) колонками. Имя в табе перекрывает суффикс команды,
+ * поэтому в табе суффикс не дублируется. Радар и стартовые бусты во время игры —
+ * на панели в левом верхнем углу (GamePanel).
+ * Ванильных голов в табе на офлайн-сервере нет — клиент рисует их только
+ * при шифрованном соединении, — поэтому голова идёт первым символом имени.
  */
 public class TabArrows {
     // радар — символ шрифта bows:radar из ресурспака (resourcepack/gen_icon_font.py),
-    // по символу на каждое из 12 направлений; у всех одинаковая ширина
-    private static final Key RADAR_FONT = Key.key("bows", "radar");
-    private static final int RADAR_FIRST_CODEPOINT = 0xE200;
+    // по символу на каждое из 12 направлений
     private static final int RADAR_SECTORS = 12;
-    // ширина символа радара: 7px + 1px после символа
-    private static final int RADAR_WIDTH = 8;
 
     private static final String TEAM_PREFIX = "bows_";
 
@@ -57,18 +46,12 @@ public class TabArrows {
     // отступы в пикселях шрифта; меньше 12 точно набрать нельзя (см. pad)
     private static final int COLUMN_GAP = 12;
     private static final int DIGIT_WIDTH = 6;
-    private static final int SPACE_WIDTH = 4;
-    // раз в столько обновлений имена шлются заново, даже если не менялись:
-    // сервер сам перезаписывает имя в табе, например при входе игрока
-    private static final int FULL_RESEND_EVERY = 10;
-
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.builder()
             .character('§').hexColors().useUnusualXRepeatedCharacterHexFormat().build();
 
-    // смотрящий -> (цель -> последнее отправленное имя)
-    private static final Map<UUID, Map<UUID, String>> sent = new HashMap<>();
+    // игрок -> последнее выставленное имя в табе
+    private static final Map<UUID, String> sent = new HashMap<>();
     private static int task = -1;
-    private static int updates = 0;
 
     public static void start() {
         stop();
@@ -80,31 +63,34 @@ public class TabArrows {
             Bukkit.getScheduler().cancelTask(task);
             task = -1;
         }
-        Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
-        for (Team team : new HashSet<>(board.getTeams())) {
-            if (team.getName().startsWith(TEAM_PREFIX)) {
-                team.unregister();
+        for (Scoreboard board : boards()) {
+            for (Team team : new HashSet<>(board.getTeams())) {
+                if (team.getName().startsWith(TEAM_PREFIX)) {
+                    team.unregister();
+                }
             }
         }
         // вернуть всем обычные имена в табе
-        for (Player viewer : Bukkit.getOnlinePlayers()) {
-            List<PlayerInfo> infos = new ArrayList<>();
-            for (Player target : Bukkit.getOnlinePlayers()) {
-                PlayerInfo info = new PlayerInfo(target.getUniqueId());
-                info.setDisplayName(null);
-                infos.add(info);
-            }
-            sendDisplayNames(viewer, infos);
+        for (Player target : Bukkit.getOnlinePlayers()) {
+            target.playerListName(null);
         }
         sent.clear();
     }
 
+    // основной скорборд и личные скорборды панели: ники над головой нужны во всех
+    private static List<Scoreboard> boards() {
+        List<Scoreboard> boards = new ArrayList<>();
+        boards.add(Bukkit.getScoreboardManager().getMainScoreboard());
+        boards.addAll(GamePanel.boards());
+        return boards;
+    }
+
     private static void update() {
-        updateNameTags();
+        for (Scoreboard board : boards()) {
+            updateNameTags(board);
+        }
 
-        boolean fullResend = updates++ % FULL_RESEND_EVERY == 0;
-
-        // левая часть (ник, хп, высота) и статистика одинаковы для всех смотрящих;
+        // ник и статистика одинаковы для всех смотрящих;
         // статистика выравнивается колонками по самой широкой строке
         Map<UUID, String> rows = new HashMap<>();
         Map<UUID, Integer> widths = new HashMap<>();
@@ -134,75 +120,31 @@ public class TabArrows {
         }
 
         Set<UUID> online = new HashSet<>();
-        for (Player viewer : Bukkit.getOnlinePlayers()) {
-            online.add(viewer.getUniqueId());
-            Map<UUID, String> sentToViewer = sent.computeIfAbsent(viewer.getUniqueId(), uuid -> new HashMap<>());
-
-            List<PlayerInfo> infos = new ArrayList<>();
-            for (Player target : Bukkit.getOnlinePlayers()) {
-                Boost starter = StarterBoosts.current(target);
-                String name = rows.get(target.getUniqueId());
-                int sector = radarSector(viewer, target);
-                String key = (starter == null ? "" : starter.getId()) + "|" + sector + "|" + name;
-                // обновляем только при изменении, чтобы не слать лишние пакеты
-                if (fullResend || !key.equals(sentToViewer.get(target.getUniqueId()))) {
-                    sentToViewer.put(target.getUniqueId(), key);
-                    PlayerInfo info = new PlayerInfo(target.getUniqueId());
-                    // иконка и текст — соседи под корнем без шрифта: дочерние компоненты
-                    // наследуют шрифт родителя, и текст после иконки стал бы квадратиками
-                    info.setDisplayName(Component.text()
-                            .append(starterPart(starter))
-                            .append(radarPart(sector))
-                            .append(LEGACY.deserialize(name))
-                            .build());
-                    infos.add(info);
-                }
+        for (Player target : Bukkit.getOnlinePlayers()) {
+            online.add(target.getUniqueId());
+            String row = rows.get(target.getUniqueId());
+            // имя в табе одно для всех смотрящих; Paper сам рассылает его при изменении
+            if (!row.equals(sent.get(target.getUniqueId()))) {
+                sent.put(target.getUniqueId(), row);
+                target.playerListName(Component.text()
+                        .append(PlayerHeads.head(target))
+                        .append(Component.text(" "))
+                        .append(LEGACY.deserialize(row))
+                        .build());
             }
-            sendDisplayNames(viewer, infos);
         }
         sent.keySet().retainAll(online);
-    }
-
-    // слева от ника: иконка стартового буста и пробел; если он использован — отступ
-    // той же ширины, чтобы ники и колонки не съезжали
-    private static Component starterPart(Boost starter) {
-        if (starter == null) {
-            return LEGACY.deserialize(pad(BoostIcons.SMALL_WIDTH + SPACE_WIDTH));
-        }
-        return Component.text()
-                .append(BoostIcons.icon(starter.getId(), BoostIcons.SMALL_FONT))
-                .append(Component.text(" "))
-                .build();
     }
 
     private static String leftPart(Player target) {
         // в командном режиме ник в цвете команды
         org.bukkit.ChatColor teamColor = Teams.colorOf(target);
-        String name = (teamColor != null ? teamColor.toString() : "") + target.getName() + ChatColor.RESET;
-        if (Game.isRunning && Game.gamePlayers.contains(target)) {
-            name += ChatColor.of("#a6a6a6") + " [" + (int) target.getHealth() + "] ["
-                    + target.getLocation().getBlockY() + "]";
-        }
-        return name;
-    }
-
-    // радар между иконкой стартового буста и ником; без радара — отступ той же ширины
-    private static Component radarPart(int sector) {
-        if (sector < 0) {
-            return LEGACY.deserialize(pad(RADAR_WIDTH + SPACE_WIDTH));
-        }
-        return Component.text()
-                .append(Component.text(String.valueOf((char) (RADAR_FIRST_CODEPOINT + sector)))
-                        .font(RADAR_FONT)
-                        .color(TextColor.fromHexString("#e97218"))
-                        .shadowColor(ShadowColor.none()))
-                .append(Component.text(" "))
-                .build();
+        return (teamColor != null ? teamColor.toString() : "") + target.getName() + ChatColor.RESET;
     }
 
     // направление на цель относительно взгляда смотрящего: 0 — вперёд, по часовой;
     // -1 — радара нет (это сам смотрящий, цель не в игре или в другом мире)
-    private static int radarSector(Player viewer, Player target) {
+    static int radarSector(Player viewer, Player target) {
         if (!Game.isRunning || !Game.gamePlayers.contains(target) || target.equals(viewer)) {
             return -1;
         }
@@ -232,7 +174,7 @@ public class TabArrows {
     }
 
     // ширина ASCII-текста в стандартном шрифте Minecraft, с промежутком 1px
-    private static int textWidth(String text) {
+    static int textWidth(String text) {
         int width = 0;
         for (char c : text.toCharArray()) {
             width += charWidth(c);
@@ -262,8 +204,7 @@ public class TabArrows {
     // Команда есть у каждого игрока и названа по нику: клиент сортирует таб по
     // порядку в списке, затем наблюдателей вниз, затем по названию команды и нику —
     // так таб идёт по алфавиту, а наблюдатели внизу
-    private static void updateNameTags() {
-        Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
+    private static void updateNameTags(Scoreboard board) {
         Set<String> activeTeams = new HashSet<>();
         for (Player target : Bukkit.getOnlinePlayers()) {
             if (target.getPlayerListOrder() != 0) {
@@ -299,14 +240,5 @@ public class TabArrows {
                 team.unregister();
             }
         }
-    }
-
-    private static void sendDisplayNames(Player viewer, List<PlayerInfo> infos) {
-        if (infos.isEmpty()) {
-            return;
-        }
-        PacketEvents.getAPI().getPlayerManager().sendPacket(viewer,
-                new WrapperPlayServerPlayerInfoUpdate(WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_DISPLAY_NAME,
-                        infos));
     }
 }

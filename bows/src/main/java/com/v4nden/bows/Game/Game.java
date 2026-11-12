@@ -37,7 +37,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 import com.v4nden.bows.Bows;
 import com.v4nden.bows.BowsUtils;
@@ -46,8 +45,6 @@ import com.v4nden.bows.Boosts.StarterBoosts;
 import com.v4nden.bows.Boosts.Types.ElusiveBoost;
 import com.v4nden.bows.Boosts.Types.GiantBoost;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public class Game implements Listener {
     public static boolean isRunning = false;
@@ -65,12 +62,16 @@ public class Game implements Listener {
     private static final long BOOST_PERIOD_TICKS = 20 * 30L;
     // барьер сужается до ширины BORDER_MIN_SIZE за BORDER_SHRINK_SECONDS, затем финал:
     // до ширины BORDER_FINAL_SIZE за BORDER_FINAL_SECONDS, бусты — раз в FINAL_BOOST_PERIOD_TICKS
+    private static final double BORDER_START_SIZE = 1400;
     private static final double BORDER_MIN_SIZE = 5;
     private static final long BORDER_SHRINK_SECONDS = 7 * 60;
     private static final double BORDER_FINAL_SIZE = 2;
     private static final long BORDER_FINAL_SECONDS = 3 * 60;
     private static final long FINAL_BOOST_PERIOD_TICKS = 20 * 10L;
     private static boolean isFinal = false;
+    // когда выпадет следующий буст и раз в сколько они выпадают сейчас (для StatusBar)
+    private static long nextBoostAt = 0;
+    private static long boostPeriodMillis = BOOST_PERIOD_TICKS * 50;
 
     private static int taskActionTimer;
     private static int taskRenewArrowsTimer;
@@ -129,6 +130,7 @@ public class Game implements Listener {
 
         gameStart = System.currentTimeMillis();
         isFinal = false;
+        boostPeriodMillis = BOOST_PERIOD_TICKS * 50;
 
         Random random = new Random();
 
@@ -174,26 +176,15 @@ public class Game implements Listener {
             }
         }, 0L, 20L);
         taskActionTimer = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, () -> {
-            long diff = System.currentTimeMillis() - gameStart;
-
             gamePlayers.forEach((player) -> {
-
-                double xVectorToCenter = player.getLocation().getX() - Game.gameLocation.getX();
-                double zVectorToCenter = player.getLocation().getZ() - Game.gameLocation.getZ();
-
-                Vector vectorToCenter = new Vector(xVectorToCenter, 0, zVectorToCenter).normalize();
-                Vector directionVector = player.getLocation().getDirection().normalize();
-
-                Double indicator = vectorToCenter.distance(directionVector) / 2;
-
-                player.setExp(indicator.floatValue());
-
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                        new TextComponent(
-                                "[" + Math.round(diff / 1000) + "] ["
-                                        + StarterBoosts.regularBoostSlots(player).size() + "/" + MAX_BOOSTS + "]"));
+                // полоска опыта скрыта ресурспаком, на её месте — StatusBar;
+                // уровень обнуляем, чтобы над ним не висела цифра
+                if (player.getLevel() != 0 || player.getExp() != 0) {
+                    player.setLevel(0);
+                    player.setExp(0);
+                }
+                StatusBar.send(player);
             });
-
         }, 0L, 2L);
         taskBoosts = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, Game::giveBoosts,
                 0L, BOOST_PERIOD_TICKS);
@@ -214,7 +205,7 @@ public class Game implements Listener {
         }, 0L, 60L);
 
         // граница — в мире игры (у каждой игры свой мир, см. GameWorlds)
-        location.getWorld().getWorldBorder().setSize(1400);
+        location.getWorld().getWorldBorder().setSize(BORDER_START_SIZE);
         location.getWorld().getWorldBorder().setCenter(location);
         location.getWorld().getWorldBorder().setSize(BORDER_MIN_SIZE, BORDER_SHRINK_SECONDS);
     }
@@ -223,11 +214,26 @@ public class Game implements Listener {
         isFinal = true;
         gameLocation.getWorld().getWorldBorder().setSize(BORDER_FINAL_SIZE, BORDER_FINAL_SECONDS);
         Bukkit.getServer().getScheduler().cancelTask(taskBoosts);
+        boostPeriodMillis = FINAL_BOOST_PERIOD_TICKS * 50;
+        nextBoostAt = System.currentTimeMillis() + boostPeriodMillis;
         taskBoosts = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bows.instance, Game::giveBoosts,
                 FINAL_BOOST_PERIOD_TICKS, FINAL_BOOST_PERIOD_TICKS);
     }
 
+    /** Доля пройденного времени до следующего буста: 0 — только что выпал, 1 — вот-вот. */
+    public static double boostProgress() {
+        double left = (nextBoostAt - System.currentTimeMillis()) / (double) boostPeriodMillis;
+        return Math.max(0, Math.min(1, 1 - left));
+    }
+
+    /** Насколько барьер сузился к финальному размеру: 0 — старт, 1 — финальный размер. */
+    public static double borderProgress() {
+        double size = gameLocation.getWorld().getWorldBorder().getSize();
+        return Math.max(0, Math.min(1, (BORDER_START_SIZE - size) / (BORDER_START_SIZE - BORDER_FINAL_SIZE)));
+    }
+
     private static void giveBoosts() {
+        nextBoostAt = System.currentTimeMillis() + boostPeriodMillis;
         List<String> boostsList = new ArrayList<>();
 
         for (BoostTypes type : BoostTypes.values()) {
@@ -250,6 +256,9 @@ public class Game implements Listener {
         // в тестовой игре не трогаем игроков, которые в ней не участвовали
         Collection<? extends Player> playersToReset = isTest ? new ArrayList<>(gamePlayers)
                 : Bukkit.getOnlinePlayers();
+        if (isRunning) {
+            KillAnnouncer.announceTop();
+        }
         isRunning = false;
         isTest = false;
         Bukkit.getServer().getScheduler().cancelTask(taskActionTimer);

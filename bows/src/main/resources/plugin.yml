@@ -20,7 +20,7 @@ commands:
     permission: "bows.root"
   hudtext:
     description: "Show animated HUD text above the crosshair (test)"
-    usage: "/hudtext <seconds> <text...>"
+    usage: "/hudtext <seconds> <text...> (@nick = player head)"
     permission: "bows.root"
   info:
     description: "Boost descriptions menu"
