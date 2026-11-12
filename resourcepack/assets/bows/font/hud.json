@@ -245,6 +245,150 @@
     },
     {
       "type": "bitmap",
+      "file": "bows:font/hud/direction_0.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_1.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_2.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_3.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_4.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_5.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_6.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_7.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_8.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_9.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_10.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_11.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_12.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_13.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_14.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/direction_15.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
       "file": "bows:font/hud/frame.png",
       "ascent": 7,
       "height": 7,
@@ -325,9 +469,18 @@
       ]
     },
     {
+      "type": "bitmap",
+      "file": "bows:font/hud/fill_1_shifted.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
       "type": "space",
       "advances": {
-        "": -164,
+        "": -155,
         "": -1,
         "": 1,
         "": 2,
