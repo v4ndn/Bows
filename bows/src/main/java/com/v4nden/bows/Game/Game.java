@@ -125,6 +125,7 @@ public class Game implements Listener {
         gameLocation = location;
         gamePlayers.clear();
         KillAnnouncer.reset();
+        ScreenEffect.reset();
         GiantBoost.reset();
         StarterChoiceDialog.reset();
 
@@ -224,6 +225,15 @@ public class Game implements Listener {
     public static double boostProgress() {
         double left = (nextBoostAt - System.currentTimeMillis()) / (double) boostPeriodMillis;
         return Math.max(0, Math.min(1, 1 - left));
+    }
+
+    /** Прогресс финала: −1 — финала нет, 0 — только начался, 1 — барьер финального размера. */
+    public static double finalProgress() {
+        if (!isFinal) {
+            return -1;
+        }
+        double size = gameLocation.getWorld().getWorldBorder().getSize();
+        return Math.max(0, Math.min(1, (BORDER_MIN_SIZE - size) / (BORDER_MIN_SIZE - BORDER_FINAL_SIZE)));
     }
 
     /** Насколько барьер сузился к финальному размеру: 0 — старт, 1 — финальный размер. */

@@ -20,6 +20,15 @@ import com.v4nden.bows.Utils.TemporaryListener;
 import net.md_5.bungee.api.ChatColor;
 
 public class TimestopBoost implements IBoostType {
+    // кто остановил время (пока оно стоит): его и сокомандников таймстоп не замораживает
+    private static Player owner;
+
+    /** Заморожен ли игрок остановленным временем (для эффекта экрана ScreenEffect). */
+    public static boolean isFrozen(Player player) {
+        return owner != null && Bukkit.getServerTickManager().isFrozen() && !player.equals(owner)
+                && !Teams.areTeammates(owner, player);
+    }
+
     public Boost create(Player player) {
         return new BoostGenerator()
                 .setMaterial(Material.NETHER_STAR)
@@ -42,11 +51,15 @@ public class TimestopBoost implements IBoostType {
 
                     long now = System.currentTimeMillis();
                     Bukkit.getServerTickManager().setFrozen(true);
+                    owner = consumer;
 
                     Game.gamePlayers.forEach((gamePlayer) -> {
                         gamePlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 1));
-                        gamePlayer.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 20 * 10, 1));
                         if (!gamePlayer.equals(consumer) && !Teams.areTeammates(consumer, gamePlayer)) {
+                            // ночное зрение — сигнал ресурспаку: у замороженных мир без красок
+                            // (shaders/include/bows_timestop.glsl), у владельца — обычный
+                            gamePlayer.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 20 * 10, 1,
+                                    false, false, false));
                             gamePlayer.setAllowFlight(true);
                         }
                     });
@@ -93,6 +106,7 @@ public class TimestopBoost implements IBoostType {
                                     1);
                         }
                         Bukkit.getServerTickManager().setFrozen(false);
+                        owner = null;
                     }, 200L);
 
                     new TemporaryListener<>(PlayerMoveEvent.class, EventPriority.NORMAL, e -> {

@@ -68,10 +68,14 @@ public class StatusBar {
         }
         space(text, BAR_INNER + 1 - filled);
 
-        player.sendActionBar(Component.text(text.toString())
-                .font(FONT)
-                .color(MARKER)
-                .shadowColor(ShadowColor.none()));
+        // слои эффектов экрана — первыми (под элементом статуса), ширина у них нулевая
+        player.sendActionBar(Component.text()
+                .append(ScreenEffect.overlays(player))
+                .append(Component.text(text.toString())
+                        .font(FONT)
+                        .color(MARKER)
+                        .shadowColor(ShadowColor.none()))
+                .build());
     }
 
     // 1 — смотрит точно на центр карты, 0 — точно от него

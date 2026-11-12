@@ -1,6 +1,8 @@
 package com.v4nden.bows.Boosts.Types;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -49,6 +51,22 @@ public class RageBoost implements IBoostType {
     private static final long DEBRIS_LIFETIME_TICKS = 60L;
     // защита от падения после окончания буста
     private static final long NO_FALL_AFTER_TICKS = 40L;
+    // красная виньетка на экране (ScreenEffect) держится чуть дольше самого рывка
+    private static final long SCREEN_EFFECT_MILLIS = BREAK_TICKS * 50 + 700;
+    private static final Map<UUID, Long> ragingUntil = new HashMap<>();
+
+    /** Идёт ли у игрока рывок «Рейджа» (для эффекта экрана ScreenEffect). */
+    public static boolean isRaging(Player player) {
+        Long until = ragingUntil.get(player.getUniqueId());
+        if (until == null) {
+            return false;
+        }
+        if (until < System.currentTimeMillis()) {
+            ragingUntil.remove(player.getUniqueId());
+            return false;
+        }
+        return true;
+    }
 
     public Boost create(Player player) {
         return new BoostGenerator()
@@ -60,6 +78,7 @@ public class RageBoost implements IBoostType {
                 .setDescription(ChatColor.of("#a6a6a6") + "При использовании:" + ChatColor.RESET
                         + "\n 0.5 секунды несёт владельца\n туда, куда он смотрит,\n ломая все блоки на пути\n и расталкивая игроков\n в стороны")
                 .setRunnable(consumer -> {
+                    ragingUntil.put(consumer.getUniqueId(), System.currentTimeMillis() + SCREEN_EFFECT_MILLIS);
 
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         p.playSound(consumer.getLocation(), Sound.ENTITY_RAVAGER_ROAR, SoundCategory.MASTER, 1, 1);
