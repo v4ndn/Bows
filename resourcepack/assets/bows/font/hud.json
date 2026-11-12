@@ -493,21 +493,6 @@
       }
     },
     {
-      "type": "bitmap",
-      "file": "bows:font/hud/overlay.png",
-      "ascent": 1,
-      "height": 1,
-      "chars": [
-        ""
-      ]
-    },
-    {
-      "type": "space",
-      "advances": {
-        "": -2
-      }
-    },
-    {
       "type": "space",
       "advances": {
         "": -210

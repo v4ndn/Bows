@@ -16,9 +16,6 @@ out float sphericalVertexDistance;
 out float cylindricalVertexDistance;
 out vec4 vertexColor;
 out vec2 texCoord0;
-// полноэкранный слой (ScreenEffect.java): x — номер эффекта (0 — не слой), y — сила 0..255
-flat out ivec2 overlayEffect;
-out vec2 overlayUv;
 
 // ---- Bows: анимированный HUD-текст над прицелом ----
 //
@@ -40,13 +37,6 @@ const float HUD_SCALE = 2.0;
 const float HUD_OFFSET_PIXELS = 200.0;
 // на сколько GUI-пикселей текст выезжает снизу при появлении
 const float HUD_SLIDE = 10.0;
-
-// ---- Bows: полноэкранный слой эффектов (ScreenEffect.java, rendertype_text.fsh) ----
-//
-// Символ 1×1 с цветом (252, эффект, сила) растягивается на весь экран: вершины
-// глифа идут в порядке левый верх, левый низ, правый низ, правый верх, поэтому
-// угол — номер вершины по модулю 4. Сам эффект рисует фрагментный шейдер.
-const int OVERLAY_MARKER_RED = 252;
 
 // ---- Bows: элемент статуса на месте полоски опыта (StatusBar.java) ----
 //
@@ -82,8 +72,6 @@ float easeOutCubic(float x) {
 
 void main() {
     vec3 position = Position;
-    overlayEffect = ivec2(0);
-    overlayUv = vec2(0.0);
     vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
 
     ivec3 rgb = ivec3(round(Color.rgb * 255.0));
@@ -137,14 +125,6 @@ void main() {
     }
 
     gl_Position = ProjMat * ModelViewMat * vec4(position, 1.0);
-
-    if (rgb.r == OVERLAY_MARKER_RED && rgb.g > 0 && ProjMat[2][3] == 0.0) {
-        int corner = gl_VertexID % 4;
-        vec2 uv = vec2(corner >= 2 ? 1.0 : 0.0, corner == 1 || corner == 2 ? 1.0 : 0.0);
-        gl_Position = vec4(uv.x * 2.0 - 1.0, 1.0 - uv.y * 2.0, 0.0, 1.0);
-        overlayEffect = ivec2(rgb.g, rgb.b);
-        overlayUv = uv;
-    }
 
     sphericalVertexDistance = fog_spherical_distance(Position);
     cylindricalVertexDistance = fog_cylindrical_distance(Position);

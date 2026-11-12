@@ -17,9 +17,6 @@
 Здесь же пробел на минус ширину строки панели участников (Game/GamePanel.java):
 строка рисуется дважды — тень и сам текст — и между ними возврат к её началу.
 
-И символ полноэкранного слоя (Game/ScreenEffect.java): 1×1, шейдер растягивает
-его на весь экран и рисует эффект сам; после него пробел −2 — ширина строки не меняется.
-
 Запуск: python3 gen_hud.py
 """
 import json
@@ -54,8 +51,6 @@ FILL_1_SHIFTED = 0xE329
 SPACE_FIRST = 0xE330
 DIRECTION_FIRST = 0xE340
 PANEL_BACK = 0xE351
-OVERLAY = 0xE360
-OVERLAY_BACK = 0xE361
 
 BACKGROUND = (0, 0, 0, 130)
 BORDER = (0, 0, 0, 200)
@@ -156,10 +151,6 @@ for i, width in enumerate(FILL_PIECES):
 providers.append(bitmap('fill_1_shifted.png', fill(1, 2), FILL_1_SHIFTED))
 providers.append({'type': 'space',
                   'advances': {chr(SPACE_FIRST + i): advance for i, advance in enumerate(SPACES)}})
-Image.new('RGBA', (1, 1), (255, 255, 255, 255)).save(os.path.join(TEXTURES, 'overlay.png'))
-providers.append({'type': 'bitmap', 'file': 'bows:font/hud/overlay.png', 'ascent': 1, 'height': 1,
-                  'chars': [chr(OVERLAY)]})
-providers.append({'type': 'space', 'advances': {chr(OVERLAY_BACK): -2}})
 # возврат от конца тени строки панели к её началу
 providers.append({'type': 'space', 'advances': {chr(PANEL_BACK): -PANEL_WIDTH}})
 
