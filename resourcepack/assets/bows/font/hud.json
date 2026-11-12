@@ -1,0 +1,343 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/boosts_0.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/boosts_1.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/boosts_2.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/boosts_3.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/boosts_4.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/boosts_5.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/boosts_6.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/boosts_7.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/boosts_8.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/boosts_9.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/boosts_10.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_0.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_1.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_2.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_3.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_4.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_5.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_6.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_7.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_8.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_9.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_10.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_11.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_12.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_13.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_14.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/timer_15.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/frame.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/fill_1.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/fill_2.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/fill_4.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/fill_8.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/fill_16.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/fill_32.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/fill_64.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/fill_128.png",
+      "ascent": 7,
+      "height": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": -164,
+        "": -1,
+        "": 1,
+        "": 2,
+        "": 4,
+        "": 8,
+        "": 16,
+        "": 32,
+        "": 64,
+        "": 128
+      }
+    }
+  ]
+}

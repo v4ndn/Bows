@@ -38,6 +38,14 @@ const float HUD_OFFSET_PIXELS = 200.0;
 // на сколько GUI-пикселей текст выезжает снизу при появлении
 const float HUD_SLIDE = 10.0;
 
+// ---- Bows: элемент статуса на месте полоски опыта (StatusBar.java) ----
+//
+// Строка actionbar из шрифта bows:hud шириной 182px, как полоска опыта, поэтому
+// по x она уже стоит над ней (обе по центру экрана). По y actionbar рисуется
+// с guiHeight − 72, полоска опыта — около guiHeight − 29: сдвиг вниз постоянный.
+const ivec3 STATUS_MARKER = ivec3(254, 7, 0);
+const float STATUS_SHIFT_Y = 42.0;
+
 // ---- Bows: панель участников в левом верхнем углу (GamePanel.java) ----
 //
 // Это сайдбар скорборда. Цвет текста строк — метка (254, вид, число строк):
@@ -81,6 +89,11 @@ void main() {
 
         position.xy = target + (position.xy - vanillaCenter) * scale;
         vertexColor = vec4(isHudShadow ? HUD_COLOR * 0.25 : HUD_COLOR, t);
+    }
+
+    if (rgb == STATUS_MARKER && ProjMat[2][3] == 0.0) {
+        position.y += STATUS_SHIFT_Y;
+        vertexColor = vec4(1.0, 1.0, 1.0, Color.a) * texelFetch(Sampler2, UV2 / 16, 0);
     }
 
     bool isPanel = rgb.r == PANEL_MARKER_RED && rgb.g >= 3 && rgb.g <= 31 && rgb.b >= 1 && rgb.b <= 15;
