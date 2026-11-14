@@ -863,11 +863,29 @@
     },
     {
       "type": "bitmap",
+      "file": "bows:font/hud/health_divider.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
       "file": "bows:font/hud/nametag_frame.png",
       "ascent": -2,
       "height": 5,
       "chars": [
         ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_divider.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
       ]
     },
     {
