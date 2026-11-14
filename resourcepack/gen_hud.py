@@ -14,6 +14,11 @@
 Глифы bitmap получают ширину по последнему непрозрачному столбцу и шаг на 1px
 больше, поэтому после кусков заливки идёт пробел −1 (символы шрифта space).
 
+Полоса здоровья (Game/HealthBar.java) — на месте сердечек, на всю ширину хотбара (182px),
+высотой 9px: рамка, заливка здоровья цветом по состоянию (обычное, яд, иссушение,
+заморозка) и золотая заливка поглощения. Заливка без узора — её куски можно ставить
+с любой позиции. Сердечки и еду ресурспак прячет прозрачными текстурами.
+
 Здесь же пробел на минус ширину строки панели участников (Game/GamePanel.java):
 строка рисуется дважды — тень и сам текст — и между ними возврат к её началу.
 
@@ -42,7 +47,18 @@ FILL_PIECES = [1, 2, 4, 8, 16, 32, 64, 128]
 PANEL_WIDTH = 210
 SPACES = [-BAR_WIDTH, -1, 1, 2, 4, 8, 16, 32, 64, 128]
 
-# коды символов (должны совпадать с StatusBar.java)
+HEALTH_WIDTH = 182
+HEALTH_HEIGHT = 9
+# светлый верх, середина, тёмный низ: обычное, яд, иссушение, заморозка, поглощение
+HEALTH_COLORS = [
+    ((255, 96, 96, 255), (222, 44, 44, 255), (168, 26, 26, 255)),
+    ((160, 206, 72, 255), (116, 164, 34, 255), (82, 122, 22, 255)),
+    ((104, 98, 98, 255), (66, 60, 60, 255), (42, 38, 38, 255)),
+    ((178, 232, 255, 255), (112, 190, 236, 255), (78, 150, 202, 255)),
+    ((255, 224, 96, 255), (236, 186, 40, 255), (190, 142, 20, 255)),
+]
+
+# коды символов (должны совпадать с StatusBar.java и HealthBar.java)
 BOOST_FIRST = 0xE300
 TIMER_FIRST = 0xE310
 FRAME = 0xE320
@@ -51,6 +67,9 @@ FILL_1_SHIFTED = 0xE329
 SPACE_FIRST = 0xE330
 DIRECTION_FIRST = 0xE340
 PANEL_BACK = 0xE351
+HEALTH_FILL_FIRST = 0xE360  # + цвет * 8 + номер куска
+HEALTH_FRAME = 0xE390
+HEALTH_BACK = 0xE391
 
 BACKGROUND = (0, 0, 0, 130)
 BORDER = (0, 0, 0, 200)
@@ -130,9 +149,31 @@ def fill(width, phase=0):
     return image
 
 
-def bitmap(path, image, char):
+def health_frame():
+    image = Image.new('RGBA', (HEALTH_WIDTH, HEALTH_HEIGHT))
+    for y in range(1, HEALTH_HEIGHT - 1):
+        for x in range(HEALTH_WIDTH):
+            left, right = x == 0, x == HEALTH_WIDTH - 1
+            top, bottom = y == 1, y == HEALTH_HEIGHT - 2
+            if (left or right) and (top or bottom):
+                continue
+            image.putpixel((x, y), BORDER if left or right or top or bottom else BACKGROUND)
+    return image
+
+
+def health_fill(width, colors):
+    # строки 2..6 внутри рамки: светлый верх, середина, тёмный низ
+    light, middle, dark = colors
+    image = Image.new('RGBA', (width, HEALTH_HEIGHT))
+    for y in range(2, HEALTH_HEIGHT - 2):
+        for x in range(width):
+            image.putpixel((x, y), light if y == 2 else middle if y <= 4 else dark)
+    return image
+
+
+def bitmap(path, image, char, height=HEIGHT):
     image.save(os.path.join(TEXTURES, path))
-    return {'type': 'bitmap', 'file': f'bows:font/hud/{path}', 'ascent': HEIGHT, 'height': HEIGHT,
+    return {'type': 'bitmap', 'file': f'bows:font/hud/{path}', 'ascent': height, 'height': height,
             'chars': [chr(char)]}
 
 
@@ -151,6 +192,13 @@ for i, width in enumerate(FILL_PIECES):
 providers.append(bitmap('fill_1_shifted.png', fill(1, 2), FILL_1_SHIFTED))
 providers.append({'type': 'space',
                   'advances': {chr(SPACE_FIRST + i): advance for i, advance in enumerate(SPACES)}})
+providers.append(bitmap('health_frame.png', health_frame(), HEALTH_FRAME, HEALTH_HEIGHT))
+for color, colors in enumerate(HEALTH_COLORS):
+    for i, width in enumerate(FILL_PIECES):
+        providers.append(bitmap(f'health_{color}_{width}.png', health_fill(width, colors),
+                                HEALTH_FILL_FIRST + color * 8 + i, HEALTH_HEIGHT))
+# возврат от конца строки статуса к её началу — полоса здоровья рисуется поверх по x
+providers.append({'type': 'space', 'advances': {chr(HEALTH_BACK): -HEALTH_WIDTH}})
 # возврат от конца тени строки панели к её началу
 providers.append({'type': 'space', 'advances': {chr(PANEL_BACK): -PANEL_WIDTH}})
 

@@ -493,6 +493,381 @@
       }
     },
     {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_frame.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_0_1.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_0_2.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_0_4.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_0_8.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_0_16.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_0_32.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_0_64.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_0_128.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_1_1.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_1_2.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_1_4.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_1_8.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_1_16.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_1_32.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_1_64.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_1_128.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_2_1.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_2_2.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_2_4.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_2_8.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_2_16.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_2_32.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_2_64.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_2_128.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_3_1.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_3_2.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_3_4.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_3_8.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_3_16.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_3_32.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_3_64.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_3_128.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_4_1.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_4_2.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_4_4.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_4_8.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_4_16.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_4_32.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_4_64.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_4_128.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": -182
+      }
+    },
+    {
       "type": "space",
       "advances": {
         "": -210

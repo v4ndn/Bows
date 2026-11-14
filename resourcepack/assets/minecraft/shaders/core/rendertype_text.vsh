@@ -46,6 +46,13 @@ const float HUD_SLIDE = 10.0;
 const ivec3 STATUS_MARKER = ivec3(254, 7, 0);
 const float STATUS_SHIFT_Y = 42.0;
 
+// ---- Bows: полоса здоровья на месте сердечек (HealthBar.java) ----
+//
+// В той же строке actionbar, что и статус (или одна), шириной 182px; глиф на 2px
+// выше (высота 9 против 7), а сердечки — на 9px выше полоски опыта.
+const ivec3 HEALTH_MARKER = ivec3(254, 8, 0);
+const float HEALTH_SHIFT_Y = 34.0;
+
 // ---- Bows: панель участников в левом верхнем углу (GamePanel.java) ----
 //
 // Это сайдбар скорборда. Цвет текста строк — метка (254, вид, число строк);
@@ -95,6 +102,11 @@ void main() {
 
     if (rgb == STATUS_MARKER && ProjMat[2][3] == 0.0) {
         position.y += STATUS_SHIFT_Y;
+        vertexColor = vec4(1.0, 1.0, 1.0, Color.a) * texelFetch(Sampler2, UV2 / 16, 0);
+    }
+
+    if (rgb == HEALTH_MARKER && ProjMat[2][3] == 0.0) {
+        position.y += HEALTH_SHIFT_Y;
         vertexColor = vec4(1.0, 1.0, 1.0, Color.a) * texelFetch(Sampler2, UV2 / 16, 0);
     }
 
