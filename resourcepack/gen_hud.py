@@ -15,13 +15,14 @@
 больше, поэтому после кусков заливки идёт пробел −1 (символы шрифта space).
 
 Полоса здоровья (Game/HealthBar.java) — на месте сердечек, на всю ширину хотбара (182px),
-высотой 9px: рамка, заливка здоровья цветом по состоянию (обычное, яд, иссушение,
-заморозка) и золотая заливка поглощения. Заливка без узора — её куски можно ставить
-с любой позиции. Поверх заливки — разделители секций (по сердцу) шириной 1px.
+высотой 9px: рамка-«пилюля» (скругление на всю высоту), заливка здоровья цветом
+по состоянию (оранжевый цвет проекта, яд, иссушение, заморозка) и золотая заливка
+поглощения. Заливка без узора — её куски можно ставить с любой позиции, поэтому
+секции (по половине сердца) плагин собирает из кусков с зазором 1px между ними.
 Сердечки и еду ресурспак прячет прозрачными текстурами.
 
 Полоса здоровья под ником над головой (Game/TabArrows.java) — те же куски поменьше
-(52×5) в суффиксе команды. Отрицательный ascent опускает их под строку ника,
+(64×5) в суффиксе команды. Отрицательный ascent опускает их под строку ника,
 по x их ставят отрицательные пробелы — сущностей и шейдера не нужно.
 
 Здесь же пробел на минус ширину строки панели участников (Game/GamePanel.java):
@@ -52,22 +53,10 @@ FILL_PIECES = [1, 2, 4, 8, 16, 32, 64, 128]
 PANEL_WIDTH = 210
 SPACES = [-BAR_WIDTH, -1, 1, 2, 4, 8, 16, 32, 64, 128]
 
-HEALTH_WIDTH = 182
-HEALTH_HEIGHT = 9
-# светлый верх, середина, тёмный низ: обычное, яд, иссушение, заморозка, поглощение
-HEALTH_COLORS = [
-    ((255, 96, 96, 255), (222, 44, 44, 255), (168, 26, 26, 255)),
-    ((160, 206, 72, 255), (116, 164, 34, 255), (82, 122, 22, 255)),
-    ((104, 98, 98, 255), (66, 60, 60, 255), (42, 38, 38, 255)),
-    ((178, 232, 255, 255), (112, 190, 236, 255), (78, 150, 202, 255)),
-    ((255, 224, 96, 255), (236, 186, 40, 255), (190, 142, 20, 255)),
-]
-
-NAMETAG_WIDTH = 52
+NAMETAG_WIDTH = 64
 NAMETAG_HEIGHT = 5
 # верх полосы на 9px ниже верха строки ника (строка — 8px, фон таблички — до 9-го)
 NAMETAG_ASCENT = 7 - 9
-DIVIDER = (0, 0, 0, 150)
 NEGATIVE_SPACES = [-1, -2, -4, -8, -16, -32, -64, -128]
 
 # коды символов (должны совпадать с StatusBar.java и HealthBar.java)
@@ -84,8 +73,6 @@ HEALTH_FRAME = 0xE390
 HEALTH_BACK = 0xE391
 NAMETAG_FILL_FIRST = 0xE3A0  # + цвет * 8 + номер куска
 NAMETAG_FRAME = 0xE3C8
-NAMETAG_DIVIDER = 0xE3C9
-HEALTH_DIVIDER = 0xE3CA
 NEGATIVE_SPACE_FIRST = 0xE3D0
 
 BACKGROUND = (0, 0, 0, 130)
@@ -96,6 +83,17 @@ DIRECTION_COLOR = (90, 200, 255, 255)
 BAR_LIGHT = (240, 150, 82, 255)
 BAR_COLOR = (226, 128, 56, 255)
 BAR_DARK = (196, 104, 44, 255)
+HEALTH_WIDTH = 182
+HEALTH_HEIGHT = 9
+# светлый верх, середина, тёмный низ: обычное, яд, иссушение, заморозка, поглощение
+HEALTH_COLORS = [
+    (BAR_LIGHT, BAR_COLOR, BAR_DARK),
+    ((160, 206, 72, 255), (116, 164, 34, 255), (82, 122, 22, 255)),
+    ((104, 98, 98, 255), (66, 60, 60, 255), (42, 38, 38, 255)),
+    ((178, 232, 255, 255), (112, 190, 236, 255), (78, 150, 202, 255)),
+    ((255, 224, 96, 255), (236, 186, 40, 255), (190, 142, 20, 255)),
+]
+
 BACKGROUND_STRIPE = (0, 0, 0, 145)
 STRIPE_LIGHTEN = 0.12
 DONUT_EMPTY = (40, 40, 40, 170)
@@ -166,15 +164,27 @@ def fill(width, phase=0):
     return image
 
 
+def pill(width, height):
+    """Рамка-«пилюля» width×height: скругление радиусом в полвысоты, контур и фон внутри."""
+    def inside(x, y, w, h):
+        r = h / 2
+        cx = min(max(x + 0.5, r), w - r)
+        return 0 <= x < w and 0 <= y < h and math.hypot(x + 0.5 - cx, y + 0.5 - r) <= r
+
+    image = Image.new('RGBA', (width, height))
+    for y in range(height):
+        for x in range(width):
+            if inside(x - 1, y - 1, width - 2, height - 2):
+                image.putpixel((x, y), BACKGROUND)
+            elif inside(x, y, width, height):
+                image.putpixel((x, y), BORDER)
+    return image
+
+
 def health_frame():
+    # рамка — строки 1..7 глифа высотой 9
     image = Image.new('RGBA', (HEALTH_WIDTH, HEALTH_HEIGHT))
-    for y in range(1, HEALTH_HEIGHT - 1):
-        for x in range(HEALTH_WIDTH):
-            left, right = x == 0, x == HEALTH_WIDTH - 1
-            top, bottom = y == 1, y == HEALTH_HEIGHT - 2
-            if (left or right) and (top or bottom):
-                continue
-            image.putpixel((x, y), BORDER if left or right or top or bottom else BACKGROUND)
+    image.paste(pill(HEALTH_WIDTH, HEALTH_HEIGHT - 2), (0, 1))
     return image
 
 
@@ -189,15 +199,7 @@ def health_fill(width, colors):
 
 
 def nametag_frame():
-    image = Image.new('RGBA', (NAMETAG_WIDTH, NAMETAG_HEIGHT))
-    for y in range(NAMETAG_HEIGHT):
-        for x in range(NAMETAG_WIDTH):
-            left, right = x == 0, x == NAMETAG_WIDTH - 1
-            top, bottom = y == 0, y == NAMETAG_HEIGHT - 1
-            if (left or right) and (top or bottom):
-                continue
-            image.putpixel((x, y), BORDER if left or right or top or bottom else BACKGROUND)
-    return image
+    return pill(NAMETAG_WIDTH, NAMETAG_HEIGHT)
 
 
 def nametag_fill(width, colors):
@@ -206,13 +208,6 @@ def nametag_fill(width, colors):
     for y in range(1, NAMETAG_HEIGHT - 1):
         for x in range(width):
             image.putpixel((x, y), (light, middle, dark)[y - 1])
-    return image
-
-
-def divider(height, rows):
-    image = Image.new('RGBA', (1, height))
-    for y in rows:
-        image.putpixel((0, y), DIVIDER)
     return image
 
 
@@ -242,11 +237,7 @@ for color, colors in enumerate(HEALTH_COLORS):
     for i, width in enumerate(FILL_PIECES):
         providers.append(bitmap(f'health_{color}_{width}.png', health_fill(width, colors),
                                 HEALTH_FILL_FIRST + color * 8 + i, HEALTH_HEIGHT))
-providers.append(bitmap('health_divider.png', divider(HEALTH_HEIGHT, range(2, HEALTH_HEIGHT - 2)),
-                        HEALTH_DIVIDER, HEALTH_HEIGHT))
 providers.append(bitmap('nametag_frame.png', nametag_frame(), NAMETAG_FRAME, NAMETAG_HEIGHT, NAMETAG_ASCENT))
-providers.append(bitmap('nametag_divider.png', divider(NAMETAG_HEIGHT, range(1, NAMETAG_HEIGHT - 1)),
-                        NAMETAG_DIVIDER, NAMETAG_HEIGHT, NAMETAG_ASCENT))
 for color, colors in enumerate(HEALTH_COLORS):
     for i, width in enumerate(FILL_PIECES):
         providers.append(bitmap(f'nametag_{color}_{width}.png', nametag_fill(width, colors),
