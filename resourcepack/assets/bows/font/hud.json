@@ -862,6 +862,406 @@
       ]
     },
     {
+      "type": "bitmap",
+      "file": "bows:font/hud/health_divider.png",
+      "ascent": 9,
+      "height": 9,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_frame.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_divider.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_0_1.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_0_2.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_0_4.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_0_8.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_0_16.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_0_32.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_0_64.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_0_128.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_1_1.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_1_2.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_1_4.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_1_8.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_1_16.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_1_32.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_1_64.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_1_128.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_2_1.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_2_2.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_2_4.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_2_8.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_2_16.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_2_32.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_2_64.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_2_128.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_3_1.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_3_2.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_3_4.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_3_8.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_3_16.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_3_32.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_3_64.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_3_128.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_4_1.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_4_2.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_4_4.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_4_8.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_4_16.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_4_32.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_4_64.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "bows:font/hud/nametag_4_128.png",
+      "ascent": -2,
+      "height": 5,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": -1,
+        "": -2,
+        "": -4,
+        "": -8,
+        "": -16,
+        "": -32,
+        "": -64,
+        "": -128
+      }
+    },
+    {
       "type": "space",
       "advances": {
         "": -182

@@ -17,7 +17,12 @@
 Полоса здоровья (Game/HealthBar.java) — на месте сердечек, на всю ширину хотбара (182px),
 высотой 9px: рамка, заливка здоровья цветом по состоянию (обычное, яд, иссушение,
 заморозка) и золотая заливка поглощения. Заливка без узора — её куски можно ставить
-с любой позиции. Сердечки и еду ресурспак прячет прозрачными текстурами.
+с любой позиции. Поверх заливки — разделители секций (по сердцу) шириной 1px.
+Сердечки и еду ресурспак прячет прозрачными текстурами.
+
+Полоса здоровья под ником над головой (Game/TabArrows.java) — те же куски поменьше
+(52×5) в суффиксе команды. Отрицательный ascent опускает их под строку ника,
+по x их ставят отрицательные пробелы — сущностей и шейдера не нужно.
 
 Здесь же пробел на минус ширину строки панели участников (Game/GamePanel.java):
 строка рисуется дважды — тень и сам текст — и между ними возврат к её началу.
@@ -58,6 +63,13 @@ HEALTH_COLORS = [
     ((255, 224, 96, 255), (236, 186, 40, 255), (190, 142, 20, 255)),
 ]
 
+NAMETAG_WIDTH = 52
+NAMETAG_HEIGHT = 5
+# верх полосы на 9px ниже верха строки ника (строка — 8px, фон таблички — до 9-го)
+NAMETAG_ASCENT = 7 - 9
+DIVIDER = (0, 0, 0, 150)
+NEGATIVE_SPACES = [-1, -2, -4, -8, -16, -32, -64, -128]
+
 # коды символов (должны совпадать с StatusBar.java и HealthBar.java)
 BOOST_FIRST = 0xE300
 TIMER_FIRST = 0xE310
@@ -70,6 +82,11 @@ PANEL_BACK = 0xE351
 HEALTH_FILL_FIRST = 0xE360  # + цвет * 8 + номер куска
 HEALTH_FRAME = 0xE390
 HEALTH_BACK = 0xE391
+NAMETAG_FILL_FIRST = 0xE3A0  # + цвет * 8 + номер куска
+NAMETAG_FRAME = 0xE3C8
+NAMETAG_DIVIDER = 0xE3C9
+HEALTH_DIVIDER = 0xE3CA
+NEGATIVE_SPACE_FIRST = 0xE3D0
 
 BACKGROUND = (0, 0, 0, 130)
 BORDER = (0, 0, 0, 200)
@@ -171,10 +188,38 @@ def health_fill(width, colors):
     return image
 
 
-def bitmap(path, image, char, height=HEIGHT):
+def nametag_frame():
+    image = Image.new('RGBA', (NAMETAG_WIDTH, NAMETAG_HEIGHT))
+    for y in range(NAMETAG_HEIGHT):
+        for x in range(NAMETAG_WIDTH):
+            left, right = x == 0, x == NAMETAG_WIDTH - 1
+            top, bottom = y == 0, y == NAMETAG_HEIGHT - 1
+            if (left or right) and (top or bottom):
+                continue
+            image.putpixel((x, y), BORDER if left or right or top or bottom else BACKGROUND)
+    return image
+
+
+def nametag_fill(width, colors):
+    light, middle, dark = colors
+    image = Image.new('RGBA', (width, NAMETAG_HEIGHT))
+    for y in range(1, NAMETAG_HEIGHT - 1):
+        for x in range(width):
+            image.putpixel((x, y), (light, middle, dark)[y - 1])
+    return image
+
+
+def divider(height, rows):
+    image = Image.new('RGBA', (1, height))
+    for y in rows:
+        image.putpixel((0, y), DIVIDER)
+    return image
+
+
+def bitmap(path, image, char, height=HEIGHT, ascent=None):
     image.save(os.path.join(TEXTURES, path))
-    return {'type': 'bitmap', 'file': f'bows:font/hud/{path}', 'ascent': height, 'height': height,
-            'chars': [chr(char)]}
+    return {'type': 'bitmap', 'file': f'bows:font/hud/{path}', 'ascent': height if ascent is None else ascent,
+            'height': height, 'chars': [chr(char)]}
 
 
 os.makedirs(TEXTURES, exist_ok=True)
@@ -197,6 +242,17 @@ for color, colors in enumerate(HEALTH_COLORS):
     for i, width in enumerate(FILL_PIECES):
         providers.append(bitmap(f'health_{color}_{width}.png', health_fill(width, colors),
                                 HEALTH_FILL_FIRST + color * 8 + i, HEALTH_HEIGHT))
+providers.append(bitmap('health_divider.png', divider(HEALTH_HEIGHT, range(2, HEALTH_HEIGHT - 2)),
+                        HEALTH_DIVIDER, HEALTH_HEIGHT))
+providers.append(bitmap('nametag_frame.png', nametag_frame(), NAMETAG_FRAME, NAMETAG_HEIGHT, NAMETAG_ASCENT))
+providers.append(bitmap('nametag_divider.png', divider(NAMETAG_HEIGHT, range(1, NAMETAG_HEIGHT - 1)),
+                        NAMETAG_DIVIDER, NAMETAG_HEIGHT, NAMETAG_ASCENT))
+for color, colors in enumerate(HEALTH_COLORS):
+    for i, width in enumerate(FILL_PIECES):
+        providers.append(bitmap(f'nametag_{color}_{width}.png', nametag_fill(width, colors),
+                                NAMETAG_FILL_FIRST + color * 8 + i, NAMETAG_HEIGHT, NAMETAG_ASCENT))
+providers.append({'type': 'space',
+                  'advances': {chr(NEGATIVE_SPACE_FIRST + i): advance for i, advance in enumerate(NEGATIVE_SPACES)}})
 # возврат от конца строки статуса к её началу — полоса здоровья рисуется поверх по x
 providers.append({'type': 'space', 'advances': {chr(HEALTH_BACK): -HEALTH_WIDTH}})
 # возврат от конца тени строки панели к её началу
